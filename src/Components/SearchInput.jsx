@@ -113,6 +113,19 @@ const SearchInput = ({ onTrackSelected }) => {
                 ))}
               </div>
             )}
+            <div className="text-center mt-6">
+              <p className="text-blue-300 text-sm mb-2">
+                Don't see your song?
+              </p>
+              <a 
+                href="http://"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-200 text-sm underline"
+              >
+                Request to add it to MusicAtlas →
+              </a>
+            </div>
           </div>
         </div>
 
