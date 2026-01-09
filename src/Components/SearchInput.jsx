@@ -48,7 +48,7 @@ const SearchInput = ({ onTrackSelected }) => {
       <div className="w-full max-w-2xl">
         <div className="bg-gray-800 rounded-3xl shadow-2xl p-8">
           <h1 className="text-5xl text-white font-bold text-center mb-2 tracking-tighter">
-            Sync Readiness Score FRESH
+            Sync Readiness Score v2
           </h1>
           <p className="text-blue-300 text-center mb-10 text-lg tracking-tight">
             Search any song to see how sync-ready it is
