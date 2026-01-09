@@ -18,22 +18,24 @@ const SearchInput = ({ onTrackSelected }) => {
     try {
       const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
 
-      if (!response.ok) {
-        throw new Error("Search failed");
-      }
+      if (!response.ok) throw new Error("Search failed");
 
       const data = await response.json();
+      console.log("Raw MusicAtlas data:", data); // ← add this to see
 
-      const tracks = data.map(item => ({
-        id: item.id,
-        title: item.title,
-        artist: item.artist,
+      // Handle both possible formats
+      const tracksArray = Array.isArray(data) ? data : data.results || data.tracks || [];
+
+      const tracks = tracksArray.map(item => ({
+        id: item.id || `${item.title}-${item.artist}`,
+        title: item.title || item.name,
+        artist: item.artist || item.artistName,
         artwork: item.artwork || null
       }));
 
       setResults(tracks.slice(0, 8));
     } catch (error) {
-      console.log("Search failed:", error);
+      console.error("Search failed:", error);
       setResults([]);
     } finally {
       setLoading(false);
