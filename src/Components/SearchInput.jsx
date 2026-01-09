@@ -26,8 +26,8 @@ const SearchInput = ({ onTrackSelected }) => {
       // Handle both possible formats
       const tracksArray = Array.isArray(data) ? data : data.results || data.tracks || [];
 
-      const tracks = data.map(item => ({
-        id: item.id,
+      const tracks = tracksArray.map(item => ({
+        id: item.id || `${item.track}-${item.artist}`,  // fallback id
         title: item.track,
         artist: item.artist,
         artwork: item.artwork || null  // if they provide one
