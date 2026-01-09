@@ -26,12 +26,12 @@ const SearchInput = ({ onTrackSelected }) => {
       // Handle both possible formats
       const tracksArray = Array.isArray(data) ? data : data.results || data.tracks || [];
 
-      const tracks = tracksArray.map(item => ({
-        id: item.id || `${item.title}-${item.artist}`,
-        title: item.title || item.name,
-        artist: item.artist || item.artistName,
-        artwork: item.artwork || null
-      }));
+      const tracks = data.map(item => ({
+        id: item.id,
+        title: item.track,
+        artist: item.artist,
+        artwork: item.artwork || null  // if they provide one
+}));
 
       setResults(tracks.slice(0, 8));
     } catch (error) {
