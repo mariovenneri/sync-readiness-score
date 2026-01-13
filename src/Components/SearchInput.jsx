@@ -47,13 +47,17 @@ const SearchInput = ({ onTrackSelected }) => {
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
-      <div className="w-full max-w-2xl">
+      <div className="w-full max-w-4xl">
         <div className="bg-gray-800 rounded-3xl shadow-2xl p-8">
-          <h1 className="text-5xl text-white font-bold text-center mb-2 tracking-tighter">
-            Sync Readiness Score v2
+          {/* <h1 className="text-5xl md:text-6xl text-white font-black text-center  tracking-tighter leading-tight">
+            Discover If Your Song Is<br />
+            <span className="text-blue-400 text-3xl">Sync-Ready for TV & Film</span>
+          </h1> */}
+          <h1 className="text-6xl text-white font-bold text-center mb-1 tracking-tighter leading-tight">
+            Song Sync Score
           </h1>
-          <p className="text-blue-300 text-center mb-10 text-lg tracking-tight">
-            Search any song to see how sync-ready it is
+          <p className="text-blue-300 text-center mb-10 text-xl tracking-tight">
+            Get Your Music into TV and Film
           </p>
 
           <div className="relative">
@@ -64,21 +68,21 @@ const SearchInput = ({ onTrackSelected }) => {
               placeholder="Search any song or artist..."
               className="w-full px-8 py-4 text-xl bg-white/10 border border-blue-500/50 rounded-full text-white placeholder-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-500/50 focus:border-blue-400 transition-all"
             />
-
-            {/* Analyze Button */}
-            {query.includes(" – ") && (
-              <div className="text-center mt-8">
-                <button
-                  onClick={() => {
-                    const [title, artist] = query.split(" – ");
-                    onTrackSelected({ title, artist });
-                  }}
-                  className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-5 px-14 rounded-full text-xl cursor-pointer shadow-lg transition"
-                >
-                  Analyze My Track
-                </button>
-              </div>
-            )}
+            {/* Circular Send Button - inside the input */}
+            <button
+              onClick={() => {
+                if (query.trim()) {
+                  // Optional: trigger analysis if no dropdown selection
+                  onTrackSelected({ title: query, artist: "Unknown" }); // fallback
+                }
+              }}
+              disabled={!query.trim()}
+              className="absolute right-2 top-2 w-11 h-11 flex items-center justify-center border border-blue-500 rounded-full bg-blue-600 hover:bg-blue-500 hover:scale-110 hover:shadow-blue-500/50 text-white transition-all duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-blue-400/50"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </button>
 
             {/* Dropdown */}
             {(loading || results.length > 0) && (
@@ -113,28 +117,45 @@ const SearchInput = ({ onTrackSelected }) => {
                 ))}
               </div>
             )}
-            <div className="text-center mt-6">
-              <p className="text-blue-300 text-sm mb-2">
-                Don't see your song?
-              </p>
-              <a 
-                href="http://"
+            <div className="text-center mt-5">
+              <div className="flex justify-center items-center gap-3 text-sm">
+                <a 
+                href="https://musicatlas.ai/syncrep/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-400 hover:text-blue-200 text-sm underline"
+                className="bg-gray-900 opacity-95 border border-gray-900 hover:border-blue-900 hover:border hover:scale-105 text-white font-sm py-3 px-8 rounded-xl transition shadow-2xl"
+                >
+                  SyncRep
+                </a>
+                <a
+                href="https://musicatlas.ai/artists/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-gray-900 opacity-95 border border-gray-900 hover:border-blue-900 hover:border hover:scale-105 text-white font-sm py-3 px-8 rounded-xl transition shadow-2xl"
               >
-                Request to add it to MusicAtlas →
-              </a>
+                Can't find your song?
+                </a>
+              </div>
             </div>
           </div>
         </div>
 
-        <p className="text-center text-blue-400/60 text-sm mt-8">
+         <div className="mt-5 text-center flex items-center justify-center">
+            <svg className="w-5 h-5 text-blue-400 relative left-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p className="text-gray-400 text-sm leading-relaxed max-w-md">
+              Sync readiness shows how well your song fits TV, film, ads, and trailers — a high score means more placement chances.
+            </p>
+          </div>
+        <a 
+        href="https://musicatlas.ai"
+        className="flex justify-center text-blue-400/60 text-sm mt-5 hover:text-blue-400/75 transition">
           Powered by MusicAtlas.ai
-        </p>
+        </a>
       </div>
     </div>
   );
 };
 
-export default SearchInput;
+export default SearchInput; 
