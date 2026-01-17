@@ -1,9 +1,9 @@
-// api/describe-track.js — Vercel serverless proxy (POST)
+// api/describe-track-proxy.js — Vercel serverless proxy (POST)
 
 export default async function handler(req, res) {
-  console.log("Proxy route hit – full URL:", req.url);
-  console.log("Request method:", req.method);
-  console.log("Raw body:", req.body); // Debug: see what Vercel receives
+  console.log("Proxy hit – method:", req.method);
+  console.log("Raw body received:", req.body);
+  console.log("Parsed body:", { artist: req.body?.artist, title: req.body?.title });
 
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
