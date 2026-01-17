@@ -2,6 +2,7 @@
 
 export default async function handler(req, res) {
   const { artist, title } = req.query;
+  console.log("Proxy received query:", req.query);
 
   if (!artist || !title) {
     return res.status(400).json({ error: "Missing artist or title" });

@@ -3,7 +3,7 @@ import SearchInput from "./Components/SearchInput";
 import Loading from "./Components/Loading";
 import ScoreBreakdown from "./Components/ScoreBreakdown";
 import { getSimilarTracks } from "./library/lastFMapi";
-import musicAtlasProxy from "../api/musicatlas";
+import musicAtlasProxy from "./api/musicatlas";
 import { generateSyncFeedback } from "./library/aiApi";
 
 function App() {
@@ -21,9 +21,12 @@ function App() {
 
       try {
         console.log("Calling MusicAtlas proxy for describe_track...");
-        const musicAtlasData = await fetch(
-          `/api/musicatlas?artist=${encodeURIComponent(track.artist)}&title=${encodeURIComponent(track.title)}`
-        ).then(r => {
+        const params = new URLSearchParams({
+          artist: track.artist,
+          title: track.title
+        });
+
+        const musicAtlasData = await fetch(`/api/musicatlas?${params.toString()}`).then(r => {
           if (!r.ok) throw new Error(`Proxy failed: ${r.status}`);
           return r.json();
         });
