@@ -1,8 +1,13 @@
-// api/musicatlas.js — Vercel serverless proxy
+// api/musicatlas.js — Vercel serverless proxy (now POST)
 
 export default async function handler(req, res) {
-  const { artist, title } = req.query;
-  console.log("Proxy received query:", req.query);
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
+
+  const { artist, title } = req.body;
+
+  console.log("Proxy received body:", req.body);
 
   if (!artist || !title) {
     return res.status(400).json({ error: "Missing artist or title" });
