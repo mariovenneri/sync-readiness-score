@@ -3,7 +3,7 @@ import SearchInput from "./Components/SearchInput";
 import Loading from "./Components/Loading";
 import ScoreBreakdown from "./Components/ScoreBreakdown";
 import { getSimilarTracks } from "./library/lastFMapi";
-import { getTrackAnalysis } from "./library/musicAtlasApi";
+import musicAtlasProxy from "../api/musicatlas";
 import { generateSyncFeedback } from "./library/aiApi";
 
 function App() {
@@ -19,14 +19,20 @@ function App() {
     setSelectedTrack(track);
     setCurrentScreen("loading");
 
-    try {
-      // 1. Get real MusicAtlas analysis
-      const musicAtlasData = await getTrackAnalysis(track.artist, track.title);
-      console.log("Full MusicAtlas data:", musicAtlasData);
+      try {
+        console.log("Calling MusicAtlas proxy for describe_track...");
+        const musicAtlasData = await fetch(
+          `/api/musicatlas?artist=${encodeURIComponent(track.artist)}&title=${encodeURIComponent(track.title)}`
+        ).then(r => {
+          if (!r.ok) throw new Error(`Proxy failed: ${r.status}`);
+          return r.json();
+        });
 
-      if (!musicAtlasData) {
-        throw new Error("No MusicAtlas data");
-      }
+        console.log("Full MusicAtlas data:", musicAtlasData);
+
+        if (!musicAtlasData || musicAtlasData.error) {
+          throw new Error(musicAtlasData?.error || "No data from MusicAtlas");
+        }
 
       // 2. Extract real features from MusicAtlas
       const audio = musicAtlasData.audio_characteristics || {};
