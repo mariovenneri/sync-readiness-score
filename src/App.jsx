@@ -62,6 +62,7 @@ function App() {
         <SearchInput onTrackSelected={handleTrackSelected} />
       )}
      
+      
       {currentScreen === "loading" && selectedTrack && (
         <Loading track={selectedTrack} />
       )}
