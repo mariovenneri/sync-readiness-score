@@ -21,7 +21,7 @@ function App() {
     try {
       console.log("Calling MusicAtlas proxy for describe_track...");
 
-        const musicAtlasData = await fetch('/api/musicatlas', {
+        const musicAtlasData = await fetch('/api/music-atlas', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
