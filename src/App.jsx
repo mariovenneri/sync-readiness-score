@@ -21,19 +21,18 @@ function App() {
     try {
       console.log("Calling MusicAtlas proxy for describe_track...");
 
-      const params = new URLSearchParams({
-        artist: track.artist,
-        title: track.title
-      });
+      const params = new URLSearchParams();
+      params.append("artist", track.artist);
+      params.append("title", track.title);
 
-      const response = await fetch(`/api/musicatlas?${params.toString()}`);
+      const musicAtlasData = await fetch(`/api/musicatlas?${params.toString()}`)
+        .then(r => {
+          if (!r.ok) {
+            throw new Error(`Proxy failed: ${r.status}`);
+          }
+          return r.json();
+        });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Proxy failed: ${response.status} - ${errorText}`);
-      }
-
-      const musicAtlasData = await response.json();
       console.log("Full MusicAtlas data:", musicAtlasData);
 
       if (!musicAtlasData || musicAtlasData.error) {
