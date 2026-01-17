@@ -3,7 +3,6 @@ import SearchInput from "./Components/SearchInput";
 import Loading from "./Components/Loading";
 import ScoreBreakdown from "./Components/ScoreBreakdown";
 import { getSimilarTracks } from "./library/lastFMapi";
-import musicAtlasProxy from "./api/musicatlas";
 import { generateSyncFeedback } from "./library/aiApi";
 
 function App() {
@@ -19,23 +18,27 @@ function App() {
     setSelectedTrack(track);
     setCurrentScreen("loading");
 
-      try {
-        console.log("Calling MusicAtlas proxy for describe_track...");
-        const params = new URLSearchParams({
-          artist: track.artist,
-          title: track.title
-        });
+    try {
+      console.log("Calling MusicAtlas proxy for describe_track...");
 
-        const musicAtlasData = await fetch(`/api/musicatlas?${params.toString()}`).then(r => {
-          if (!r.ok) throw new Error(`Proxy failed: ${r.status}`);
-          return r.json();
-        });
+      const params = new URLSearchParams({
+        artist: track.artist,
+        title: track.title
+      });
 
-        console.log("Full MusicAtlas data:", musicAtlasData);
+      const response = await fetch(`/api/musicatlas?${params.toString()}`);
 
-        if (!musicAtlasData || musicAtlasData.error) {
-          throw new Error(musicAtlasData?.error || "No data from MusicAtlas");
-        }
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Proxy failed: ${response.status} - ${errorText}`);
+      }
+
+      const musicAtlasData = await response.json();
+      console.log("Full MusicAtlas data:", musicAtlasData);
+
+      if (!musicAtlasData || musicAtlasData.error) {
+        throw new Error(musicAtlasData?.error || "No data from MusicAtlas");
+      }
 
       // 2. Extract real features from MusicAtlas
       const audio = musicAtlasData.audio_characteristics || {};
@@ -60,7 +63,7 @@ function App() {
       setMusicAtlasRaw(musicAtlasData);
       setCurrentScreen("result");
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error in handleTrackSelected:", error);
       setCurrentScreen("result");
     }
   };
