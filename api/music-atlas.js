@@ -1,8 +1,10 @@
-// api/music-atlas.js — Vercel serverless proxy (now POST)
+// api/music-atlas.js — Vercel serverless proxy (POST)
 
 export default async function handler(req, res) {
   console.log("Proxy route hit – full URL:", req.url);
-  console.log("Query params raw:", req.query);
+  console.log("Request method:", req.method);
+  console.log("Raw body:", req.body); // Debug: see what Vercel receives
+
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -90,6 +92,7 @@ export default async function handler(req, res) {
 
 export const config = {
   api: {
+    bodyParser: true, // ← This enables JSON body parsing!
     externalResolver: true,
   },
 };
