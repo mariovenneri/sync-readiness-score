@@ -68,54 +68,289 @@ const ScoreBreakdown = ({ track, similarTracks, audioFeatures, aiFeedback, onBac
   return { finalScore, breakdowns };
 }, [features, aiFeedback]);
 
-  return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-4">
-      <div className="w-full max-w-2xl">
-        <div className="bg-gray-800 rounded-3xl shadow-2xl p-8 text-center">
-          <p className="text-blue-300 text-xl mb-2">For "{track.title}" by {track.artist}</p>
-          <div className="text-8xl text-blue-400 font-black mb-10">{finalScore}/100</div>
+return (
+  <div className="min-h-screen bg-white flex items-center justify-center px-4 py-8">
+    <div className="w-full max-w-5xl">
+      {/* Main grid container */}
+      <div
+        className="grid gap-6"
+        style={{
+          gridTemplateColumns: "1fr 1fr",
+          gridTemplateRows: "1fr 1fr auto",
+          gridTemplateAreas: 
+            '"main side1" ' +
+            '"main side2" ' +
+            '"main side3" ' +
+            '"side4 side5"'
+        }}
+      >
+        {/* Big main element */}
+        <div className="grid-in-main row-span-3 bg-white rounded-xl shadow-xl p-10 flex flex-col">
+          {/* Track info */}
+          <p className="text-blue-600 text-lg mb-1 font-[Poppins] tracking-tight">Sync Readiness Score for</p>
+          <h2 className="text-5xl font-bold text-gray-900 mb-1">
+            "{track.title}"
+          </h2>
+          <p className="text-gray-600 text-lg mb-12">
+            by {track.artist}
+          </p>
 
-          <div className="space-y-3">
-            {breakdowns.map((item, index) => (
-              <div key={index} className="bg-white/10 rounded-xl overflow-hidden">
-                <button
-                  onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                  className="w-full px-6 py-5 flex justify-between items-center hover:bg-white/10 transition text-left"
-                >
-                  <span className="font-bold text-white">{item.category}</span>
-                  <span className="text-blue-300 text-xl font-bold">{item.score}/100</span>
-                </button>
-                <div className="px-6 py-3 text-blue-300 text-sm">
-                  {item.short}
-                </div>
-                {openIndex === index && (
-                  <div className="px-6 pb-5 text-blue-300 text-sm space-y-3 border-t border-blue-500/30 pt-4">
-                    <p><strong>Why:</strong> {item.fullWhy}</p>
-                    <p><strong>How to improve:</strong> {item.fullImprove}</p>
-                  </div>
-                )}
+          {/* Big score with half-circle range */}
+          <div className="relative flex flex-col items-center justify-center">
+            {/* Semi-circle background ring */}
+            <div className="relative w-76 h-38 mb-10">
+            <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 100">
+              
+            {/* Background semi-circle made of individual gray lines – flipped direction */}
+            {Array.from({ length: 50 }).map((_, i) => {
+              const angle = (i * 180) / 49; // Flip: start at 180° (3 o'clock) and go backward to 0° (9 o'clock)
+              const x1 = 100 + 80 * Math.cos((angle) * Math.PI / 180);
+              const y1 = 95 - 80 * Math.sin((angle) * Math.PI / 180);
+              const x2 = 100 + 90 * Math.cos((angle) * Math.PI / 180);
+              const y2 = 95 - 90 * Math.sin((angle) * Math.PI / 180);
+              return (
+                <line
+                  key={`bg-${i}`}
+                  x1={x1}
+                  y1={y1}
+                  x2={x2}
+                  y2={y2}
+                  stroke="#e5e7eb"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                />
+              );
+            })}
+
+            {/* Colored progress lines – fill from right (3 o'clock) to left (9 o'clock) */}
+            {Array.from({ length: 50 }).map((_, i) => {
+              const progress = i / 49; // 0 to 1
+              if (progress > finalScore / 100) return null; // skip lines beyond score
+
+              const angle = 180 - (i * 180) / 49; // Flip angle direction
+              const x1 = 100 + 80 * Math.cos((angle) * Math.PI / 180);
+              const y1 = 95 - 80 * Math.sin((angle) * Math.PI / 180);
+              const x2 = 100 + 90 * Math.cos((angle) * Math.PI / 180);
+              const y2 = 95 - 90 * Math.sin((angle) * Math.PI / 180);
+
+              let color = "#ef4444"; // red
+              if (finalScore >= 90) color = "#22c55e"; // green
+              else if (finalScore >= 70) color = "#eab308"; // yellow
+              else if (finalScore >= 50) color = "#f97316"; // orange
+
+              return (
+                <line
+                  key={`prog-${i}`}
+                  x1={x1}
+                  y1={y1}
+                  x2={x2}
+                  y2={y2}
+                  stroke={color}
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                />
+              );
+            })}
+          </svg>
+
+            {/* Central score number */}
+            <div className="relative top-15 flex flex-col items-center justify-center">
+              <div className="text-6xl md:text-12xl font-black text-gray-900 drop-shadow-md">
+                {finalScore}
               </div>
-            ))}
+              <div className="text-3xl font-bold text-gray-600">
+                / 100
+              </div>
+            </div>
           </div>
 
-          <div className="mt-12">
-            <a
-              href="https://musicatlas.ai/syncrep/?ref=your_affiliate_code"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block bg-blue-600 hover:bg-blue-700 text-white font-bold py-5 px-10 rounded-full text-xl text-center shadow-lg"
-            >
-              Get in Front of Music Producers → Join SyncRep
-            </a>
+            {/* Score label */}
+            <p className="relative bottom-5 text-gray-600 text-lg font-medium">
+              {finalScore >= 90 ? "Excellent" : finalScore >= 70 ? "Strong" : finalScore >= 50 ? "Good" : "Needs Work"}
+            </p>
+          </div>       
+        </div>
+
+        {/* Side 1 */}
+        <div className="grid-in-side1 bg-white rounded-xl shadow-md p-6 flex justify-between items-start gap-6 border border-gray-100 hover:border-green-300 transition-all duration-300">
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-gray-900">{breakdowns[0].category}</h3>
+            <span className="text-gray-600 text-sm mb-4 block">
+              {finalScore >= 90 ? "Excellent" : finalScore >= 70 ? "Strong" : finalScore >= 50 ? "Good" : "Needs Work"}
+            </span>
+            <p className="text-gray-600 text-sm mb-4">{breakdowns[0].short}</p>
+            <div className="flex justify-start">
+              <a className="text-xs border border-gray-300 px-2 py-1 rounded transition">
+              High Impact
+              </a>
+            </div>
           </div>
 
-          <button onClick={onBack} className="mt-6 text-blue-400 text-sm">
-            Analyze Another Track
-          </button>
+          <div className="shrink-0 text-right">
+            <div className="text-3xl font-black text-black">
+              {breakdowns[0].score}/100
+            </div>
+            <div className="w-30 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-blue-600 transition-all duration-500 ease-out"
+                style={{ width: `${breakdowns[0].score}%` }}
+              />
+            </div>
+            <div className="relative top-15 flex justify-end">
+              <div className="w-8 h-8 flex items-center justify-center border-2 border-blue-500 rounded-full bg-white/10 text-blue-500 font-bold text-xl transition-all hover:border-blue-600 hover:scale-105">
+                →
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        {/* Side 2 */}
+        <div className="grid-in-side1 bg-white rounded-xl shadow-md p-6 flex justify-between items-start gap-6 border border-gray-100 hover:border-green-300 transition-all duration-300">
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-gray-900">{breakdowns[1].category}</h3>
+            <span className="text-gray-600 text-sm mb-4 block">
+              {finalScore >= 90 ? "Excellent" : finalScore >= 70 ? "Strong" : finalScore >= 50 ? "Good" : "Needs Work"}
+            </span>
+            <p className="text-gray-600 text-sm">{breakdowns[1].short}</p>
+          </div>
+
+          <div className="shrink-0 text-right">
+            <div className="text-3xl font-black text-black">
+              {breakdowns[1].score}/100
+            </div>
+            <div className="w-30 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-blue-600 transition-all duration-500 ease-out"
+                style={{ width: `${breakdowns[1].score}%` }}
+              />
+            </div>
+            <div className="relative top-15 flex justify-end">
+              <div className="w-8 h-8 flex items-center justify-center border-2 border-blue-500 rounded-full bg-white/10 text-blue-500 font-bold text-xl transition-all hover:border-blue-600 hover:scale-105">
+                →
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        {/* Side 3 */}
+          <div className="grid-in-side1 bg-white rounded-xl shadow-md p-6 flex justify-between items-start gap-6 border border-gray-100 hover:border-green-300 transition-all duration-300">
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-gray-900">{breakdowns[2].category}</h3>
+            <span className="text-gray-600 text-sm mb-4 block">
+              {finalScore >= 90 ? "Excellent" : finalScore >= 70 ? "Strong" : finalScore >= 50 ? "Good" : "Needs Work"}
+            </span>
+            <p className="text-gray-600 text-sm">{breakdowns[2].short}</p>
+          </div>
+
+          <div className="shrink-0 text-right">
+            <div className="text-3xl font-black text-black">
+              {breakdowns[2].score}/100
+            </div>
+            <div className="w-30 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-blue-600 transition-all duration-500 ease-out"
+                style={{ width: `${breakdowns[2].score}%` }}
+              />
+            </div>
+            <div className="relative top-5 flex justify-end">
+              <div className="w-8 h-8 flex items-center justify-center border-2 border-blue-500 rounded-full bg-white/10 text-blue-500 font-bold text-xl transition-all hover:border-blue-600 hover:scale-105">
+                →
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        {/* Side 4 */}
+        <div className="grid-in-side1 bg-white rounded-xl shadow-md p-6 flex justify-between items-start gap-6 border border-gray-100 hover:border-green-300 transition-all duration-300">
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-gray-900">{breakdowns[3].category}</h3>
+            <span className="text-gray-600 text-sm mb-4 block">
+              {finalScore >= 90 ? "Excellent" : finalScore >= 70 ? "Strong" : finalScore >= 50 ? "Good" : "Needs Work"}
+            </span>
+            <p className="text-gray-600 text-sm">{breakdowns[3].short}</p>
+          </div>
+
+          <div className="shrink-0 text-right">
+            <div className="text-3xl font-black text-black">
+              {breakdowns[3].score}/100
+            </div>
+            <div className="w-30 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-blue-600 transition-all duration-500 ease-out"
+                style={{ width: `${breakdowns[3].score}%` }}
+              />
+            </div>
+            <div className="relative top-15 flex justify-end">
+              <div className="w-8 h-8 flex items-center justify-center border-2 border-blue-500 rounded-full bg-white/10 text-blue-500 font-bold text-xl transition-all hover:border-blue-600 hover:scale-105">
+                →
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+        {/* Side 5 */}
+        <div className="grid-in-side1 bg-white rounded-xl shadow-md p-6 flex justify-between items-start gap-6 border border-gray-100 hover:border-green-300 transition-all duration-300">
+          <div className="flex-1">
+            <h3 className="text-lg font-semibold text-gray-900">{breakdowns[4].category}</h3>
+            <span className="text-gray-600 text-sm mb-4 block">
+              {finalScore >= 90 ? "Excellent" : finalScore >= 70 ? "Strong" : finalScore >= 50 ? "Good" : "Needs Work"}
+            </span>
+            <p className="text-gray-600 text-sm mb-4">{breakdowns[4].short}</p>
+            <div className="flex justify-start">
+              <a className="text-xs border border-gray-300 px-3 py-1 rounded transition">
+              High Impact
+              </a>
+            </div>
+          </div>
+
+          <div className="shrink-0 text-right">
+            <div className="text-3xl font-black text-black">
+              {breakdowns[4].score}/100
+            </div>
+            <div className="w-30 h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-blue-600 transition-all duration-500 ease-out"
+                style={{ width: `${breakdowns[4].score}%` }}
+              />
+            </div>
+            <div className="relative top-15 flex justify-end">
+              <div className="w-8 h-8 flex items-center justify-center border-2 border-blue-500 rounded-full bg-white/10 text-blue-500 font-bold text-xl transition-all hover:border-blue-600 hover:scale-105">
+                →
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
+      {/* CTA Button - floating style */}
+        <div className="px-8 pt-12 pb-4 text-center">
+          <a
+            href="https://musicatlas.ai/syncrep/?ref=your_affiliate_code"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block bg-linear-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-5 px-12 rounded-full text-xl shadow-2xl hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+          >
+            Get in Front of Music Producers → Join SyncRep
+          </a>
+        </div>
+
+        {/* Back link  */}
+        <div className="pb-8 text-center">
+          <button 
+            onClick={onBack} 
+            className="text-blue-600 hover:text-blue-800 text-lg font-medium transition"
+          >
+            ← Analyze Another Track
+          </button>
+         </div>
     </div>
-  );
+  </div>
+);
 };
+
 
 export default ScoreBreakdown;
