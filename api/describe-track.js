@@ -1,4 +1,4 @@
-// api/music-atlas.js — Vercel serverless proxy (POST)
+// api/describe-track.js — Vercel serverless proxy (POST)
 
 export default async function handler(req, res) {
   console.log("Proxy route hit – full URL:", req.url);
