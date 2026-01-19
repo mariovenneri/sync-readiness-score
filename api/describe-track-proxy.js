@@ -3,6 +3,8 @@
 export default async function handler(req, res) {
   console.log("Proxy route hit – method:", req.method);
   console.log("Proxy received query:", req.query);
+  console.log("Artist value:", req.query.artist);
+  console.log("Title value:", req.query.title);   
 
   const { artist, title } = req.query;
 

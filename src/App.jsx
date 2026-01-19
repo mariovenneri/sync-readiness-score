@@ -13,21 +13,25 @@ function App() {
   const [aiFeedback, setAIFeedback] = useState(null);
   const [musicAtlasRaw, setMusicAtlasRaw] = useState(null);
 
-  const handleTrackSelected = async (track) => {
-    console.log("Analyzing:", track);
-    setSelectedTrack(track);
-    setCurrentScreen("loading");
+const handleTrackSelected = async (track) => {
+  console.log("Analyzing:", track);
+  console.log("Artist:", track.artist);
+  console.log("Title:", track.title);
+  
+  setSelectedTrack(track);
+  setCurrentScreen("loading");
 
-    try {
-      console.log("Calling MusicAtlas proxy for describe_track...");
-
-        const musicAtlasData = await fetch(
-          `/api/describe-track-proxy?artist=${encodeURIComponent(track.artist)}&title=${encodeURIComponent(track.title)}`
-        ).then(r => {
-          if (!r.ok) {
-            throw new Error(`Proxy failed: ${r.status}`);
-          }
-          return r.json();
+  try {
+    const url = `/api/describe-track-proxy?artist=${encodeURIComponent(track.artist)}&title=${encodeURIComponent(track.title)}`;
+    console.log("Fetching URL:", url); // ← ADD THIS
+    
+    const musicAtlasData = await fetch(url)
+      .then(r => {
+        console.log("Response status:", r.status); // ← ADD THIS
+        if (!r.ok) {
+          throw new Error(`Proxy failed: ${r.status}`);
+        }
+        return r.json();
       });
 
         console.log("Full MusicAtlas data:", musicAtlasData);
