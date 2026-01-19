@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchInput from "./Components/SearchInput";
 import Loading from "./Components/Loading";
 import ScoreBreakdown from "./Components/ScoreBreakdown";
@@ -22,12 +22,12 @@ function App() {
       console.log("Calling MusicAtlas proxy for describe_track...");
 
         const musicAtlasData = await fetch(
-        `/api/musicatlas?artist=${encodeURIComponent(track.artist)}&title=${encodeURIComponent(track.title)}`
-      ).then(r => {
-        if (!r.ok) {
-          throw new Error(`Proxy failed: ${r.status}`);
-        }
-        return r.json();
+          `/api/describe-track-proxy?artist=${encodeURIComponent(track.artist)}&title=${encodeURIComponent(track.title)}`
+        ).then(r => {
+          if (!r.ok) {
+            throw new Error(`Proxy failed: ${r.status}`);
+          }
+          return r.json();
       });
 
         console.log("Full MusicAtlas data:", musicAtlasData);
