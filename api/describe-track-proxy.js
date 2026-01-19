@@ -1,17 +1,10 @@
-// api/describe-track-proxy.js — Vercel serverless proxy (POST)
+// api/describe-track-proxy.js — Vercel serverless proxy (GET)
 
 export default async function handler(req, res) {
-  console.log("Proxy hit – method:", req.method);
-  console.log("Raw body received:", req.body);
-  console.log("Parsed body:", { artist: req.body?.artist, title: req.body?.title });
+  console.log("Proxy route hit – method:", req.method);
+  console.log("Proxy received query:", req.query);
 
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed" });
-  }
-
-  const { artist, title } = req.body;
-
-  console.log("Proxy received body:", req.body);
+  const { artist, title } = req.query;
 
   if (!artist || !title) {
     return res.status(400).json({ error: "Missing artist or title" });
@@ -28,15 +21,14 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 1. Try describe_track first
-    let response = await fetch(
-      `https://musicatlas.ai/api/describe_track?artist=${encodedArtist}&track=${encodedTitle}`,
-      {
-        headers: {
-          "Authorization": `Bearer ${key}`
-        }
+    const describeUrl = `https://musicatlas.ai/api/describe_track?artist=${encodedArtist}&track=${encodedTitle}`;
+    console.log("Calling MusicAtlas describe_track with URL:", describeUrl);
+
+    let response = await fetch(describeUrl, {
+      headers: {
+        "Authorization": `Bearer ${key}`
       }
-    );
+    });
 
     if (response.ok) {
       const data = await response.json();
@@ -44,11 +36,15 @@ export default async function handler(req, res) {
       return res.status(200).json(data);
     }
 
-    // 2. If 404 — add track first
+    console.log("Describe track failed with status:", response.status);
+
     if (response.status === 404) {
       console.log("Track not found — adding it...");
 
-      const addResponse = await fetch("https://musicatlas.ai/api/add_track", {
+      const addUrl = "https://musicatlas.ai/api/add_track";
+      console.log("Calling MusicAtlas add_track with URL:", addUrl);
+
+      const addResponse = await fetch(addUrl, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${key}`,
@@ -60,30 +56,32 @@ export default async function handler(req, res) {
       if (!addResponse.ok) {
         const errorText = await addResponse.text();
         console.error("Add track failed:", errorText);
-        return res.status(addResponse.status).json({ error: "Failed to add track" });
+        return res.status(addResponse.status).json({ error: errorText || "Failed to add track" });
       }
 
-      // 3. Retry describe after adding
-      response = await fetch(
-        `https://musicatlas.ai/api/describe_track?artist=${encodedArtist}&track=${encodedTitle}`,
-        {
-          headers: {
-            "Authorization": `Bearer ${key}`
-          }
+      console.log("Add track success — retrying describe...");
+
+      // Retry describe
+      response = await fetch(describeUrl, {
+        headers: {
+          "Authorization": `Bearer ${key}`
         }
-      );
+      });
 
       if (response.ok) {
         const data = await response.json();
         console.log("Describe after add success:", data);
         return res.status(200).json(data);
       }
+
+      const errorText = await response.text();
+      console.error("Retry describe failed:", response.status, errorText);
+      return res.status(response.status).json({ error: errorText || "Retry describe failed" });
     }
 
-    // Final failure
     const errorText = await response.text();
     console.error("Final describe failed:", response.status, errorText);
-    return res.status(response.status).json({ error: "MusicAtlas API error" });
+    return res.status(response.status).json({ error: errorText || "MusicAtlas API error" });
   } catch (error) {
     console.error("Proxy error:", error);
     return res.status(500).json({ error: "Internal server error" });
@@ -92,7 +90,7 @@ export default async function handler(req, res) {
 
 export const config = {
   api: {
-    bodyParser: true, // ← This enables JSON body parsing!
+    bodyParser: true,
     externalResolver: true,
   },
 };

@@ -21,21 +21,14 @@ function App() {
     try {
       console.log("Calling MusicAtlas proxy for describe_track...");
 
-        const musicAtlasData = await fetch('/api/describe-track-proxy', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            artist: track.artist,
-            title: track.title
-          })
-        }).then(r => {
-          if (!r.ok) {
-            throw new Error(`Proxy failed: ${r.status}`);
-          }
-          return r.json();
-        });
+        const musicAtlasData = await fetch(
+        `/api/musicatlas?artist=${encodeURIComponent(track.artist)}&title=${encodeURIComponent(track.title)}`
+      ).then(r => {
+        if (!r.ok) {
+          throw new Error(`Proxy failed: ${r.status}`);
+        }
+        return r.json();
+      });
 
         console.log("Full MusicAtlas data:", musicAtlasData);
       if (!musicAtlasData || musicAtlasData.error) {
