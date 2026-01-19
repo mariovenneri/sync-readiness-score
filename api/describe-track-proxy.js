@@ -23,7 +23,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const describeUrl = `https://musicatlas.ai/api/describe_track?artist=${encodedArtist}&track=${encodedTitle}`;
+    const describeUrl = `https://musicatlas.ai/api/describe_track?artist=${encodedArtist}&track=${encodedTitle}&title=${encodedTitle}`;
     console.log("Calling MusicAtlas describe_track with URL:", describeUrl);
 
     let response = await fetch(describeUrl, {
