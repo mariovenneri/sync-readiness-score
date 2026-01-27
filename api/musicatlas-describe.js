@@ -36,7 +36,10 @@ export default async function handler(req, res) {
           "Authorization": `Bearer ${key}`,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ artist, title })
+        body: JSON.stringify({
+          artist: artist,
+          title: title
+        })
       });
 
       await new Promise(r => setTimeout(r, 1000));
