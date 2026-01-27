@@ -12,21 +12,31 @@ const SearchInput = ({ onTrackSelected }) => {
   const [addMessage, setAddMessage] = useState("");
 
   useEffect(() => {
+    console.log("Search query changed:", query);
+    
     if (query.length < 2) {
       setResults([]);
       return;
     }
 
     const timer = setTimeout(async () => {
+      console.log("=== SEARCHING SPOTIFY ===");
+      console.log("Query:", query);
+      
       setLoading(true);
       try {
         const response = await fetch(`/api/spotify-search?q=${encodeURIComponent(query)}`);
+        
+        console.log("Response status:", response.status);
         
         if (!response.ok) {
           throw new Error("Search failed");
         }
 
         const data = await response.json();
+        console.log("Results received:", data);
+        console.log("Number of tracks:", data.tracks?.length);
+
         setResults(data.tracks || []);
 
       } catch (error) {
@@ -70,6 +80,7 @@ const SearchInput = ({ onTrackSelected }) => {
       setAddLoading(false);
     }
   };
+
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
