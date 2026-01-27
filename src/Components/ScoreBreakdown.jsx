@@ -43,9 +43,10 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, onBack }) => {
     const intensity = audio.perceived_intensity || "medium";
     const danceabilityScore = intensityMap[intensity.toLowerCase()] || 75;
 
-    // 4. Length Score (ideal: 2-3.5 minutes for sync)
-    const durationMs = audio.duration_ms || 180000;
+    // 4. Length Score (ideal: 2-3.5 minutes for sync) - Use Spotify duration
+    const durationMs = track.duration_ms || 180000;
     const durationMin = durationMs / 60000;
+    const durationSec = Math.floor((durationMs % 60000) / 1000);
     let lengthScore = 0;
     if (durationMin >= 2 && durationMin <= 3.5) {
       lengthScore = 98;
@@ -106,7 +107,7 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, onBack }) => {
         category: "Length",
         score: lengthScore,
         displayScore: displayScore(lengthScore),
-        value: `${durationMin.toFixed(1)} min`,
+        value: `${Math.floor(durationMin)}:${durationSec.toString().padStart(2, '0')}`,
         explanation: durationMin >= 2 && durationMin <= 3.5
           ? "Perfect length for sync licensing"
           : durationMin < 2 

@@ -25,12 +25,6 @@ function App() {
       
       console.log("=== MUSICATLAS DATA ===");
       console.log(JSON.stringify(data, null, 2));
-      
-      console.log("Track info:", data.track);
-      console.log("Music characteristics:", data.music_characteristics);
-      console.log("Audio characteristics:", data.audio_characteristics);
-      console.log("Genres:", data.genres);
-      console.log("Possible influences:", data.possible_influences);
 
       setMusicAtlasRaw(data);
       setCurrentScreen("result");
@@ -40,13 +34,11 @@ function App() {
     }
   };
 
-
   return (
     <div className='min-h-screen bg-white'>
       {currentScreen === "input" && (
         <SearchInput onTrackSelected={handleTrackSelected} />
       )}
-     
       
       {currentScreen === "loading" && selectedTrack && (
         <Loading track={selectedTrack} />
@@ -55,9 +47,6 @@ function App() {
       {currentScreen === "result" && selectedTrack && (
         <ScoreBreakdown 
           track={selectedTrack}
-          // similarTracks={similarTracks}
-          // audioFeatures={audioFeatures}
-          // aiFeedback={aiFeedback}
           musicAtlasRaw={musicAtlasRaw}
           onBack={() => setCurrentScreen("input")}
         />

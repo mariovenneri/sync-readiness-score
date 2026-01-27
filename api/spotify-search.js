@@ -10,8 +10,8 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Missing query" });
   }
 
-  console.log("Spotify Client ID exists:", !!process.env.SPOTIFY_CLIENT_ID);
-  console.log("Spotify Client Secret exists:", !!process.env.SPOTIFY_CLIENT_SECRET);
+  console.log("Spotify Client ID exists:", !!process.env.VITE_SPOTIFY_ID);
+  console.log("Spotify Client Secret exists:", !!process.env.VITE_SPOTIFY_SECRET);
 
   try {
     // Get Spotify token
