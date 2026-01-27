@@ -1,3 +1,4 @@
+// Components/SearchInput.jsx - Spotify Search with Logging
 import { useEffect, useState } from "react";
 
 const SearchInput = ({ onTrackSelected }) => {
@@ -6,44 +7,45 @@ const SearchInput = ({ onTrackSelected }) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-  console.log("User typed:", query);
-
-  if (query.length < 2) {
-    setResults([]);
-    return;
-  }
-
-  const timer = setTimeout(async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
-
-      if (!response.ok) throw new Error("Search failed");
-
-      const data = await response.json();
-      console.log("Raw MusicAtlas data:", data); // ← add this to see
-
-      // Handle both possible formats
-      const tracksArray = Array.isArray(data) ? data : data.results || data.tracks || [];
-
-      const tracks = tracksArray.map(item => ({
-        id: item.id || `${item.track}-${item.artist}`,  // fallback id
-        title: item.track,
-        artist: item.artist,
-        artwork: item.artwork || null  // if they provide one
-}));
-
-      setResults(tracks.slice(0, 8));
-    } catch (error) {
-      console.error("Search failed:", error);
+    console.log("Search query changed:", query);
+    
+    if (query.length < 2) {
       setResults([]);
-    } finally {
-      setLoading(false);
+      return;
     }
-  }, 300);
 
-  return () => clearTimeout(timer);
-}, [query]);;
+    const timer = setTimeout(async () => {
+      console.log("=== SEARCHING SPOTIFY ===");
+      console.log("Query:", query);
+      
+      setLoading(true);
+      try {
+        const url = `/api/spotify-search?q=${encodeURIComponent(query)}`;
+        console.log("Fetching:", url);
+        
+        const response = await fetch(url);
+        console.log("Response status:", response.status);
+
+        if (!response.ok) {
+          throw new Error("Search failed");
+        }
+
+        const data = await response.json();
+        console.log("Search results:", data);
+        console.log("Number of tracks:", data.tracks?.length || 0);
+
+        setResults(data.tracks || []);
+
+      } catch (error) {
+        console.error("Search error:", error);
+        setResults([]);
+      } finally {
+        setLoading(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [query]);
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">

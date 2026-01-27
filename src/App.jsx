@@ -1,69 +1,32 @@
-import { useEffect, useState } from "react";
+// App.jsx - Simple Business Logic with Console Logging
+import { useState } from "react";
 import SearchInput from "./Components/SearchInput";
 import Loading from "./Components/Loading";
 import ScoreBreakdown from "./Components/ScoreBreakdown";
-import { getSimilarTracks } from "./library/lastFMapi";
-import { generateSyncFeedback } from "./library/aiApi";
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState("input");
   const [selectedTrack, setSelectedTrack] = useState(null);
-  const [similarTracks, setSimilarTracks] = useState(null);
-  const [audioFeatures, setAudioFeatures] = useState(null);
-  const [aiFeedback, setAIFeedback] = useState(null);
   const [musicAtlasRaw, setMusicAtlasRaw] = useState(null);
 
-const handleTrackSelected = async (track) => {
-  console.log("Analyzing:", track);
-  console.log("Artist:", track.artist);
-  console.log("Title:", track.title);
-  
-  setSelectedTrack(track);
-  setCurrentScreen("loading");
+  const handleTrackSelected = async (track) => {
+    console.log("Track selected:", track);
+    setSelectedTrack(track);
+    setCurrentScreen("loading");
 
-  try {
-    const url = `/api/describe-track-proxy?artist=${encodeURIComponent(track.artist)}&title=${encodeURIComponent(track.title)}`;
-    console.log("Fetching URL:", url); // ← ADD THIS
-    
-    const musicAtlasData = await fetch(url)
-      .then(r => {
-        console.log("Response status:", r.status); // ← ADD THIS
-        if (!r.ok) {
-          throw new Error(`Proxy failed: ${r.status}`);
-        }
-        return r.json();
-      });
+    try {
+      const response = await fetch(
+        `/api/musicatlas-describe?artist=${encodeURIComponent(track.artist)}&title=${encodeURIComponent(track.title)}`
+      );
 
-        console.log("Full MusicAtlas data:", musicAtlasData);
-      if (!musicAtlasData || musicAtlasData.error) {
-        throw new Error(musicAtlasData?.error || "No data from MusicAtlas");
-      }
+      const data = await response.json();
+      console.log("MusicAtlas data:", data);
 
-      // 2. Extract real features from MusicAtlas
-      const audio = musicAtlasData.audio_characteristics || {};
-      const realFeatures = {
-        bpm: audio.bpm || 120,
-        key: audio.key || 8,
-        mode: audio.mode || 1,
-        perceived_intensity: audio.perceived_intensity || 0.65,
-        duration_ms: audio.duration_ms || 180000
-      };
-
-      // 3. Get similar tracks from Last.fm
-      const similar = await getSimilarTracks(track.artist, track.title, 6);
-
-      // 4. AI feedback with real MusicAtlas features
-      const feedback = await generateSyncFeedback(track, realFeatures);
-
-      // 5. Save everything
-      setAudioFeatures(realFeatures);
-      setSimilarTracks(similar);
-      setAIFeedback(feedback);
-      setMusicAtlasRaw(musicAtlasData);
+      setMusicAtlasRaw(data);
       setCurrentScreen("result");
     } catch (error) {
-      console.error("Error in handleTrackSelected:", error);
-      setCurrentScreen("result");
+      console.error("Error:", error);
+      setCurrentScreen("input");
     }
   };
 
