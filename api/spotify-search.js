@@ -61,7 +61,8 @@ export default async function handler(req, res) {
       id: track.id,
       title: track.name,
       artist: track.artists[0].name,
-      artwork: track.album.images[0]?.url
+      artwork: track.album.images[0]?.url,
+      duration_ms: track.duration_ms
     }));
 
     console.log("Returning tracks:", tracks.map(t => `${t.title} by ${t.artist}`));
