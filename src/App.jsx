@@ -10,17 +10,27 @@ function App() {
   const [musicAtlasRaw, setMusicAtlasRaw] = useState(null);
 
   const handleTrackSelected = async (track) => {
-    console.log("Track selected:", track);
+    console.log("=== TRACK SELECTED ===");
+    console.log("Track:", track);
+    
     setSelectedTrack(track);
     setCurrentScreen("loading");
 
     try {
-      const response = await fetch(
-        `/api/musicatlas-describe?artist=${encodeURIComponent(track.artist)}&title=${encodeURIComponent(track.title)}`
-      );
-
+      const url = `/api/musicatlas-describe?artist=${encodeURIComponent(track.artist)}&title=${encodeURIComponent(track.title)}`;
+      console.log("Fetching:", url);
+      
+      const response = await fetch(url);
       const data = await response.json();
-      console.log("MusicAtlas data:", data);
+      
+      console.log("=== MUSICATLAS DATA ===");
+      console.log(JSON.stringify(data, null, 2));
+      
+      console.log("Track info:", data.track);
+      console.log("Music characteristics:", data.music_characteristics);
+      console.log("Audio characteristics:", data.audio_characteristics);
+      console.log("Genres:", data.genres);
+      console.log("Possible influences:", data.possible_influences);
 
       setMusicAtlasRaw(data);
       setCurrentScreen("result");
@@ -29,6 +39,7 @@ function App() {
       setCurrentScreen("input");
     }
   };
+
 
   return (
     <div className='min-h-screen bg-white'>
@@ -44,9 +55,9 @@ function App() {
       {currentScreen === "result" && selectedTrack && (
         <ScoreBreakdown 
           track={selectedTrack}
-          similarTracks={similarTracks}
-          audioFeatures={audioFeatures}
-          aiFeedback={aiFeedback}
+          // similarTracks={similarTracks}
+          // audioFeatures={audioFeatures}
+          // aiFeedback={aiFeedback}
           musicAtlasRaw={musicAtlasRaw}
           onBack={() => setCurrentScreen("input")}
         />
