@@ -1,4 +1,4 @@
-// Components/SearchInput.jsx - Spotify Search with Logging
+// Components/SearchInput.jsx - Spotify Search with Add Track
 import { useEffect, useState } from "react";
 
 const SearchInput = ({ onTrackSelected }) => {
@@ -10,6 +10,35 @@ const SearchInput = ({ onTrackSelected }) => {
   const [addTitle, setAddTitle] = useState("");
   const [addLoading, setAddLoading] = useState(false);
   const [addMessage, setAddMessage] = useState("");
+
+  useEffect(() => {
+    if (query.length < 2) {
+      setResults([]);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`/api/spotify-search?q=${encodeURIComponent(query)}`);
+        
+        if (!response.ok) {
+          throw new Error("Search failed");
+        }
+
+        const data = await response.json();
+        setResults(data.tracks || []);
+
+      } catch (error) {
+        console.error("Search error:", error);
+        setResults([]);
+      } finally {
+        setLoading(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [query]);
 
   const handleAddTrack = async (e) => {
     e.preventDefault();
@@ -42,55 +71,10 @@ const SearchInput = ({ onTrackSelected }) => {
     }
   };
 
-  useEffect(() => {
-    console.log("Search query changed:", query);
-    
-    if (query.length < 2) {
-      setResults([]);
-      return;
-    }
-
-    const timer = setTimeout(async () => {
-      console.log("=== SEARCHING SPOTIFY ===");
-      console.log("Query:", query);
-      
-      setLoading(true);
-      try {
-        const url = `/api/spotify-search?q=${encodeURIComponent(query)}`;
-        console.log("Fetching:", url);
-        
-        const response = await fetch(url);
-        console.log("Response status:", response.status);
-
-        if (!response.ok) {
-          throw new Error("Search failed");
-        }
-
-        const data = await response.json();
-        console.log("Search results:", data);
-        console.log("Number of tracks:", data.tracks?.length || 0);
-
-        setResults(data.tracks || []);
-
-      } catch (error) {
-        console.error("Search error:", error);
-        setResults([]);
-      } finally {
-        setLoading(false);
-      }
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [query]);
-
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
       <div className="w-full max-w-4xl">
         <div className="bg-gray-800 rounded-3xl shadow-2xl p-8">
-          {/* <h1 className="text-5xl md:text-6xl text-white font-black text-center  tracking-tighter leading-tight">
-            Discover If Your Song Is<br />
-            <span className="text-blue-400 text-3xl">Sync-Ready for TV & Film</span>
-          </h1> */}
           <h1 className="text-6xl text-white font-bold text-center mb-1 tracking-tighter leading-tight">
             Song Sync Score
           </h1>
@@ -106,12 +90,12 @@ const SearchInput = ({ onTrackSelected }) => {
               placeholder="Search any song or artist..."
               className="w-full px-8 py-4 text-xl bg-white/10 border border-blue-500/50 rounded-full text-white placeholder-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-500/50 focus:border-blue-400 transition-all"
             />
+            
             {/* Circular Send Button - inside the input */}
             <button
               onClick={() => {
                 if (query.trim()) {
-                  // Optional: trigger analysis if no dropdown selection
-                  onTrackSelected({ title: query, artist: "Unknown" }); // fallback
+                  onTrackSelected({ title: query, artist: "Unknown" });
                 }
               }}
               disabled={!query.trim()}
@@ -128,7 +112,7 @@ const SearchInput = ({ onTrackSelected }) => {
                 {loading && (
                   <div className="p-6 text-blue-400 text-center">
                     <div className="inline-block w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                    <span className="ml-3">Searching MusicAtlas catalog...</span>
+                    <span className="ml-3">Searching Spotify...</span>
                   </div>
                 )}
 
@@ -155,40 +139,76 @@ const SearchInput = ({ onTrackSelected }) => {
                 ))}
               </div>
             )}
+            
             <div className="text-center mt-5">
               <div className="flex justify-center items-center gap-3 text-sm">
                 <a 
-                href="https://musicatlas.ai/syncrep/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-gray-900 opacity-95 border border-gray-900 hover:border-blue-900 hover:border hover:scale-105 text-white font-sm py-3 px-8 rounded-xl transition shadow-2xl"
+                  href="https://musicatlas.ai/syncrep/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-gray-900 opacity-95 border border-gray-900 hover:border-blue-900 hover:border hover:scale-105 text-white font-sm py-3 px-8 rounded-xl transition shadow-2xl"
                 >
                   SyncRep
                 </a>
-                <a
-                href="https://musicatlas.ai/artists/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-gray-900 opacity-95 border border-gray-900 hover:border-blue-900 hover:border hover:scale-105 text-white font-sm py-3 px-8 rounded-xl transition shadow-2xl"
-              >
-                Can't find your song?
-                </a>
+                <button
+                  onClick={() => setShowAddForm(!showAddForm)}
+                  className="bg-gray-900 opacity-95 border border-gray-900 hover:border-blue-900 hover:border hover:scale-105 text-white font-sm py-3 px-8 rounded-xl transition shadow-2xl"
+                >
+                  Can't find your song?
+                </button>
               </div>
             </div>
+
+            {/* Add Track Form */}
+            {showAddForm && (
+              <div className="mt-6 bg-blue-900/20 rounded-2xl p-6 border border-blue-500/30">
+                <h3 className="text-white text-lg font-semibold mb-4">Add Your Track to MusicAtlas</h3>
+                <form onSubmit={handleAddTrack} className="space-y-3">
+                  <input
+                    type="text"
+                    value={addArtist}
+                    onChange={(e) => setAddArtist(e.target.value)}
+                    placeholder="Artist name"
+                    required
+                    className="w-full px-4 py-3 rounded-lg bg-white/10 border border-blue-500/50 text-white placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <input
+                    type="text"
+                    value={addTitle}
+                    onChange={(e) => setAddTitle(e.target.value)}
+                    placeholder="Track title"
+                    required
+                    className="w-full px-4 py-3 rounded-lg bg-white/10 border border-blue-500/50 text-white placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <button
+                    type="submit"
+                    disabled={addLoading}
+                    className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 font-semibold"
+                  >
+                    {addLoading ? "Adding..." : "Add Track"}
+                  </button>
+                  {addMessage && (
+                    <p className="text-blue-300 text-sm text-center">{addMessage}</p>
+                  )}
+                </form>
+              </div>
+            )}
           </div>
         </div>
 
-         <div className="mt-5 text-center flex items-center justify-center">
-            <svg className="w-5 h-5 text-blue-400 relative left-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-md">
-              Sync readiness shows how well your song fits TV, film, ads, and trailers — a high score means more placement chances.
-            </p>
-          </div>
+        <div className="mt-5 text-center flex items-center justify-center">
+          <svg className="w-5 h-5 text-blue-400 relative left-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <p className="text-gray-400 text-sm leading-relaxed max-w-md">
+            Sync readiness shows how well your song fits TV, film, ads, and trailers — a high score means more placement chances.
+          </p>
+        </div>
+        
         <a 
-        href="https://musicatlas.ai"
-        className="flex justify-center text-blue-400/60 text-sm mt-5 hover:text-blue-400/75 transition">
+          href="https://musicatlas.ai"
+          className="flex justify-center text-blue-400/60 text-sm mt-5 hover:text-blue-400/75 transition"
+        >
           Powered by MusicAtlas.ai
         </a>
       </div>
