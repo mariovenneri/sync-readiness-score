@@ -86,7 +86,14 @@ const SearchInput = ({ onTrackSelected }) => {
   };
 
   const handleKeyDown = (e) => {
-    if (results.length === 0) return;
+    if (results.length === 0) {
+      // If no dropdown but user has selected a track, allow Enter to submit
+      if (e.key === "Enter" && selectedTrackFromList) {
+        e.preventDefault();
+        onTrackSelected(selectedTrackFromList);
+      }
+      return;
+    }
 
     if (e.key === "ArrowDown") {
       e.preventDefault();
