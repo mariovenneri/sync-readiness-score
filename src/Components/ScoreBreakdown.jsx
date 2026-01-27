@@ -176,20 +176,9 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, onBack }) => {
         {/* Debug Data */}
         <div className="bg-gray-100 rounded-lg p-6 mb-6">
           <h3 className="text-lg font-semibold mb-2">MusicAtlas Data (Debug):</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <h4 className="font-semibold text-sm mb-2">Music Characteristics:</h4>
-              <pre className="bg-white p-4 rounded text-xs overflow-auto max-h-64">
-                {JSON.stringify(musicAtlasRaw?.music_characteristics, null, 2)}
-              </pre>
-            </div>
-            <div>
-              <h4 className="font-semibold text-sm mb-2">Audio Characteristics:</h4>
-              <pre className="bg-white p-4 rounded text-xs overflow-auto max-h-64">
-                {JSON.stringify(musicAtlasRaw?.audio_characteristics, null, 2)}
-              </pre>
-            </div>
-          </div>
+          <pre className="bg-white p-4 rounded text-xs overflow-auto max-h-64">
+            {JSON.stringify(musicAtlasRaw, null, 2)}
+          </pre>
         </div>
 
         {/* CTA */}
