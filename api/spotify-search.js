@@ -55,6 +55,7 @@ export default async function handler(req, res) {
 
     const data = await searchResponse.json();
     console.log("Tracks found:", data.tracks?.items?.length || 0);
+    console.log("Full Spotify track object (first track):", JSON.stringify(data.tracks?.items[0], null, 2));
 
     // Return simplified tracks
     const tracks = data.tracks.items.map(track => ({

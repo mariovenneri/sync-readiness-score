@@ -10,12 +10,15 @@ const SearchInput = ({ onTrackSelected }) => {
   const [addTitle, setAddTitle] = useState("");
   const [addLoading, setAddLoading] = useState(false);
   const [addMessage, setAddMessage] = useState("");
+  const [selectedTrackFromList, setSelectedTrackFromList] = useState(null);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
   useEffect(() => {
     console.log("Search query changed:", query);
     
     if (query.length < 2) {
       setResults([]);
+      setHighlightedIndex(-1);
       return;
     }
 
@@ -38,6 +41,7 @@ const SearchInput = ({ onTrackSelected }) => {
         console.log("Number of tracks:", data.tracks?.length);
 
         setResults(data.tracks || []);
+        setHighlightedIndex(-1);
 
       } catch (error) {
         console.error("Search error:", error);
@@ -81,6 +85,32 @@ const SearchInput = ({ onTrackSelected }) => {
     }
   };
 
+  const handleKeyDown = (e) => {
+    if (results.length === 0) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlightedIndex(prev => 
+        prev < results.length - 1 ? prev + 1 : prev
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlightedIndex(prev => prev > 0 ? prev - 1 : -1);
+    } else if (e.key === "Enter" && highlightedIndex >= 0) {
+      e.preventDefault();
+      handleSelectTrack(results[highlightedIndex]);
+    }
+  };
+
+  const handleSelectTrack = (track) => {
+    console.log("=== USER CLICKED TRACK ===");
+    console.log("Track:", track);
+    console.log("Duration (ms):", track.duration_ms);
+    setSelectedTrackFromList(track);
+    setQuery(`${track.title} – ${track.artist}`);
+    setResults([]);
+    setHighlightedIndex(-1);
+  };
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
@@ -97,7 +127,12 @@ const SearchInput = ({ onTrackSelected }) => {
             <input
               type="text"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {
+                console.log("User typing:", e.target.value);
+                setQuery(e.target.value);
+                setSelectedTrackFromList(null);
+              }}
+              onKeyDown={handleKeyDown}
               placeholder="Search any song or artist..."
               className="w-full px-8 py-4 text-xl bg-white/10 border border-blue-500/50 rounded-full text-white placeholder-blue-300 focus:outline-none focus:ring-4 focus:ring-blue-500/50 focus:border-blue-400 transition-all"
             />
@@ -105,11 +140,11 @@ const SearchInput = ({ onTrackSelected }) => {
             {/* Circular Send Button - inside the input */}
             <button
               onClick={() => {
-                if (query.trim()) {
-                  onTrackSelected({ title: query, artist: "Unknown" });
+                if (selectedTrackFromList) {
+                  onTrackSelected(selectedTrackFromList);
                 }
               }}
-              disabled={!query.trim()}
+              disabled={!selectedTrackFromList}
               className="absolute right-2 top-2 w-11 h-11 flex items-center justify-center border border-blue-500 rounded-full bg-blue-600 hover:bg-blue-500 hover:scale-110 hover:shadow-blue-500/50 text-white transition-all duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-blue-400/50"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -127,15 +162,13 @@ const SearchInput = ({ onTrackSelected }) => {
                   </div>
                 )}
 
-                {results.map((track) => (
+                {results.map((track, index) => (
                   <button
                     key={track.id}
-                    onClick={() => {
-                      onTrackSelected(track);
-                      setQuery(`${track.title} – ${track.artist}`);
-                      setResults([]);
-                    }}
-                    className="w-full px-6 py-3 flex items-center gap-4 hover:bg-blue-900/40 transition text-left"
+                    onClick={() => handleSelectTrack(track)}
+                    className={`w-full px-6 py-3 flex items-center gap-4 hover:bg-blue-900/40 transition text-left ${
+                      index === highlightedIndex ? 'bg-blue-900/40' : ''
+                    }`}
                   >
                     {track.artwork ? (
                       <img src={track.artwork} alt="" className="w-10 h-10 rounded-lg object-cover" />
