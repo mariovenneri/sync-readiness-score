@@ -17,7 +17,7 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, onBack }) => {
     const influences = musicAtlasRaw.possible_influences || [];
 
     // 1. BPM Score (ideal: 90-140 BPM)
-    const bpm = music.bpm || 0;
+    const bpm = Math.round(music.bpm || 0);
     let bpmScore = 0;
     if (bpm >= 90 && bpm <= 140) {
       bpmScore = 99;
@@ -33,15 +33,15 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, onBack }) => {
     const mode = music.mode || "";
     const keyScore = mode.toLowerCase() === "major" ? 90 : 75;
 
-    // 3. Perceived Intensity Score (0-1 scale, medium range = most versatile)
+    // 3. Danceability Score (using perceived_intensity)
     const intensityMap = {
-      "low": 75,      // 0.1-0.3 - Good for dialogue/underscore
-      "medium": 95,   // 0.4-0.6 - Most versatile
-      "high": 85,     // 0.7-0.9 - Good for action/sports
-      "very high": 70 // 0.85+ - Limited use (trailers only)
+      "low": 70,      // Less danceable
+      "medium": 85,   // Moderate danceability
+      "high": 95,     // High danceability
+      "very high": 90 // Very energetic but maybe too intense
     };
     const intensity = audio.perceived_intensity || "medium";
-    const intensityScore = intensityMap[intensity.toLowerCase()] || 75;
+    const danceabilityScore = intensityMap[intensity.toLowerCase()] || 75;
 
     // 4. Length Score (ideal: 2-3.5 minutes for sync)
     const durationMs = audio.duration_ms || 180000;
@@ -57,22 +57,11 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, onBack }) => {
       lengthScore = 55;
     }
 
-    // 5. Genre Versatility Score (more genres = more opportunities)
-    const totalGenreTags = genres.length + influences.length;
-    let genreScore = 0;
-    if (totalGenreTags >= 5) {
-      genreScore = 97;
-    } else if (totalGenreTags >= 3) {
-      genreScore = 85;
-    } else if (totalGenreTags >= 1) {
-      genreScore = 70;
-    } else {
-      genreScore = 55;
-    }
+    // 5. Genre Versatility Score - REMOVED (only using music & audio characteristics)
 
-    // Calculate final score (equal weights) and cap at 99
+    // Calculate final score (equal weights) with only 4 categories and cap at 99
     const rawFinalScore = Math.round(
-      (bpmScore + keyScore + intensityScore + lengthScore + genreScore) / 5
+      (bpmScore + keyScore + danceabilityScore + lengthScore) / 4
     );
     const finalScore = Math.min(99, Math.max(51, rawFinalScore));
 
@@ -103,13 +92,15 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, onBack }) => {
           : "Minor keys great for dramatic scenes"
       },
       {
-        category: "Perceived Intensity",
-        score: intensityScore,
-        displayScore: displayScore(intensityScore),
+        category: "Danceability",
+        score: danceabilityScore,
+        displayScore: displayScore(danceabilityScore),
         value: intensity.charAt(0).toUpperCase() + intensity.slice(1),
-        explanation: intensity.toLowerCase() === "medium"
-          ? "Versatile energy level for various scenes"
-          : `${intensity.charAt(0).toUpperCase() + intensity.slice(1)} intensity works best for specific scene types`
+        explanation: intensity.toLowerCase() === "high"
+          ? "High energy, great for upbeat scenes"
+          : intensity.toLowerCase() === "medium"
+            ? "Moderate energy, versatile for various moods"
+            : "Lower energy, works well for ambient scenes"
       },
       {
         category: "Length",
@@ -121,15 +112,6 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, onBack }) => {
           : durationMin < 2 
             ? "May be too short for some placements"
             : "May need editing for most placements"
-      },
-      {
-        category: "Genre Versatility",
-        score: genreScore,
-        displayScore: displayScore(genreScore),
-        value: `${totalGenreTags} tags`,
-        explanation: totalGenreTags >= 3
-          ? "Strong cross-genre appeal"
-          : "Consider expanding sound palette"
       }
     ];
 
@@ -190,12 +172,23 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, onBack }) => {
           ))}
         </div>
 
-        {/* Debug Data (temporary) */}
+        {/* Debug Data */}
         <div className="bg-gray-100 rounded-lg p-6 mb-6">
           <h3 className="text-lg font-semibold mb-2">MusicAtlas Data (Debug):</h3>
-          <pre className="bg-white p-4 rounded text-xs overflow-auto max-h-64">
-            {JSON.stringify(musicAtlasRaw, null, 2)}
-          </pre>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <h4 className="font-semibold text-sm mb-2">Music Characteristics:</h4>
+              <pre className="bg-white p-4 rounded text-xs overflow-auto max-h-64">
+                {JSON.stringify(musicAtlasRaw?.music_characteristics, null, 2)}
+              </pre>
+            </div>
+            <div>
+              <h4 className="font-semibold text-sm mb-2">Audio Characteristics:</h4>
+              <pre className="bg-white p-4 rounded text-xs overflow-auto max-h-64">
+                {JSON.stringify(musicAtlasRaw?.audio_characteristics, null, 2)}
+              </pre>
+            </div>
+          </div>
         </div>
 
         {/* CTA */}
