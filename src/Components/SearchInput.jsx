@@ -1,5 +1,5 @@
 // Components/SearchInput.jsx - Spotify Search with Add Track
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 const SearchInput = ({ onTrackSelected }) => {
   const [query, setQuery] = useState("");
@@ -12,6 +12,7 @@ const SearchInput = ({ onTrackSelected }) => {
   const [addMessage, setAddMessage] = useState("");
   const [selectedTrackFromList, setSelectedTrackFromList] = useState(null);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     console.log("Search query changed:", query);
@@ -117,6 +118,11 @@ const SearchInput = ({ onTrackSelected }) => {
     setQuery(`${track.title} – ${track.artist}`);
     setResults([]);
     setHighlightedIndex(-1);
+    
+    // Refocus input so Enter key works
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
   };
 
   return (
@@ -132,6 +138,7 @@ const SearchInput = ({ onTrackSelected }) => {
 
           <div className="relative">
             <input
+              ref={inputRef}
               type="text"
               value={query}
               onChange={(e) => {
