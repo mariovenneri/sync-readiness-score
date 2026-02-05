@@ -42,32 +42,64 @@ REAL DATA FROM MUSICATLAS:
 - Perceived Intensity: ${intensity} (how energetic/danceable the track feels)
 - Length: ${durationMin}:${durationSec.toString().padStart(2, '0')}
 
-CONTEXT FOR SYNC LICENSING:
-- Ideal BPM: 90-140 (versatile for most placements)
-- Major keys: More versatile, work across genres
-- Perceived Intensity: 
-  * Low = dialogue/underscore scenes
-  * Medium = most versatile, fits various moods
-  * High = action, sports, upbeat scenes
-- Ideal Length: 2:00-3:30 (perfect for editing)
+HOW SUPERVISORS THINK:
+They ask: "Does this build tension without overpowering dialogue?" "Does it hit hard in the chorus?" "Will it feel urgent but not chaotic?"
 
-YOUR TASK:
-Provide specific, actionable feedback for these 4 categories. Be honest but encouraging. Focus on sync placement potential.
+SCENE MATCHING BY INTENSITY:
+- LOW (dialogue-safe): Underscore, voice-overs, reality TV, intimate scenes
+- MEDIUM (versatile): Emotional montages, narrative arcs, most placements
+- HIGH (momentum): Sports highlights, action sequences, upbeat commercials
+- VERY HIGH (maximum impact): Trailer climaxes, epic moments
 
-For each category, provide:
-- "short": One concise insight (max 10 words)
-- "why": Explain the score - what works and what could be better (2 sentences, be specific to THIS song)
-- "improve": Actionable advice for better sync placement (2 sentences, be practical and specific)
+WHAT MAKES TRACKS PLACEABLE:
+✓ Dynamic builds (sparse verse → explosive chorus)
+✓ Doesn't compete with dialogue
+✓ Clear emotional arc
+✓ Edit-friendly structure
+✗ Feels "busy" or cluttered
+✗ Aggressive even at low volume
+✗ Lacks dynamic contrast
 
-Categories:
-1. BPM Range - How the tempo affects placement versatility
-2. Key & Mode - How the key/mode affects emotional range and versatility
-3. Danceability - Based on perceived intensity (${intensity}), how this energy level affects placement types
-4. Length - How the duration affects editing and placement opportunities
+YOUR MISSION:
+Give this artist HONEST, ACTIONABLE feedback that prepares their track for SyncRep submission. Speak like a supervisor giving notes to an artist they want to help succeed.
 
-CRITICAL: Return ONLY valid JSON. No markdown code blocks. No explanations outside JSON. Just the raw JSON object.
+For each category:
+- "short": One punchy insight (8 words max) - use supervisor language
+- "why": Explain in SCENE terms - what scenes would this work for? What's limiting it? (2 sentences)
+- "improve": Specific production advice that increases placement odds (2 sentences)
 
-Format:
+CATEGORIES:
+
+1. BPM RANGE (${bpm} BPM)
+Think: Does this tempo match natural scene energy? Is it versatile across scene types?
+- 90-100: Drama, tension, emotional weight
+- 100-120: Versatile, works for most scenes
+- 120-140: Upbeat commercials, sports, energy
+- 140+: High-energy only, limits options
+
+2. KEY & MODE (${key} ${mode})
+Think: Emotional palette and genre crossover potential
+- Major: Optimistic, uplifting, works across genres
+- Minor: Dramatic, introspective, specific moods
+Does this key limit or expand placement opportunities?
+
+3. DANCEABILITY (Perceived Intensity: ${intensity})
+Think: Energy vs. dialogue safety
+- Low: Safe for underscore, won't mask speech
+- Medium: Supports narrative without dominating
+- High: Drives action, but may overpower dialogue
+How does this track's energy affect scene compatibility?
+
+4. LENGTH (${durationMin}:${durationSec.toString().padStart(2, '0')})
+Think: Editorial flexibility
+- 2:00-3:30: Perfect for most placements
+- Under 2:00: May be too short for emotional builds
+- Over 3:30: Needs editing, limits quick turnaround
+Can editors work with this easily?
+
+TONE: Be encouraging but honest. Artists need to know what's working AND what's holding them back from placement. Think: "This could land in X type of scene, but supervisors might pass because..."
+
+Return ONLY valid JSON:
 {
   "bpmRange": { "short": "...", "why": "...", "improve": "..." },
   "keyMode": { "short": "...", "why": "...", "improve": "..." },

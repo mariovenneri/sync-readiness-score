@@ -143,10 +143,13 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
         <div className="bg-white rounded-xl shadow-xl p-10 mb-6">
           <p className="text-blue-600 text-lg mb-1 font-semibold">Sync Readiness Score for</p>
           <h2 className="text-5xl font-bold text-gray-900 mb-1">"{track.title}"</h2>
-          <p className="text-gray-600 text-lg mb-8">by {track.artist}</p>
+          <p className="text-gray-600 text-lg mb-2">by {track.artist}</p>
+          {aiFeedback && (
+            <p className="text-sm text-gray-500 italic">Analyzed by music supervisor AI</p>
+          )}
 
           {/* Big Score Display */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-8 mt-6">
             <div className="text-8xl font-black text-gray-900">{finalScore}</div>
             <div className="text-3xl font-bold text-gray-600">/ 100</div>
             <p className="text-gray-600 text-xl font-medium mt-4">
@@ -192,11 +195,11 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
                       {isExpanded && (
                         <div className="mt-4 space-y-3 animate-fadeIn">
                           <div className="bg-blue-50 rounded-lg p-4">
-                            <p className="text-xs font-semibold text-blue-900 mb-1">Why this score?</p>
+                            <p className="text-xs font-semibold text-blue-900 mb-1">Scene Perspective:</p>
                             <p className="text-sm text-gray-700">{feedback.why}</p>
                           </div>
                           <div className="bg-green-50 rounded-lg p-4">
-                            <p className="text-xs font-semibold text-green-900 mb-1">How to improve:</p>
+                            <p className="text-xs font-semibold text-green-900 mb-1">Production Notes:</p>
                             <p className="text-sm text-gray-700">{feedback.improve}</p>
                           </div>
                         </div>
