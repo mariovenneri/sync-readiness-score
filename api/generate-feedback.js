@@ -1,4 +1,4 @@
-// api/generate-feedback.js
+// api/generate-feedback.js - Using Grok AI
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: "Method not allowed" });
@@ -65,38 +65,38 @@ Format:
 }`;
 
   try {
-    console.log("Calling AI API for feedback...");
+    console.log("Calling Grok AI for feedback...");
     
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await fetch("https://api.x.ai/v1/chat/completions", {
       method: "POST",
       headers: {
-        "x-api-key": process.env.ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
+        "Authorization": `Bearer ${process.env.VITE_XAI_KEY}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1024,
+        model: "grok-beta",
         messages: [
           { role: "user", content: prompt }
-        ]
+        ],
+        temperature: 0.7,
+        max_tokens: 1000
       })
     });
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("AI API error:", response.status, errorText);
+      console.error("Grok AI error:", response.status, errorText);
       return res.status(500).json({ error: "AI API failed" });
     }
 
     const data = await response.json();
-    console.log("AI response received");
+    console.log("Grok response received");
 
-    if (!data.content || data.content.length === 0) {
+    if (!data.choices || data.choices.length === 0) {
       return res.status(500).json({ error: "No content from AI" });
     }
 
-    let content = data.content[0].text.trim();
+    let content = data.choices[0].message.content.trim();
     
     // Clean up any markdown formatting
     content = content

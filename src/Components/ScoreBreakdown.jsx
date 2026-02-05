@@ -1,9 +1,12 @@
 import { useState, useMemo } from "react";
 
-const ScoreBreakdown = ({ track, musicAtlasRaw, onBack }) => {
+const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
   console.log("=== SCOREBREAKDOWN RECEIVED ===");
   console.log("Track:", track);
   console.log("MusicAtlas Raw:", musicAtlasRaw);
+  console.log("AI Feedback:", aiFeedback);
+
+  const [expandedCard, setExpandedCard] = useState(null);
 
   // Calculate scores from real MusicAtlas data
   const { finalScore, breakdowns } = useMemo(() => {
@@ -81,7 +84,8 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, onBack }) => {
         value: `${bpm} BPM`,
         explanation: bpm >= 90 && bpm <= 140 
           ? "Ideal tempo for most sync placements"
-          : "Tempo may limit certain placement types"
+          : "Tempo may limit certain placement types",
+        aiFeedbackKey: "bpmRange"
       },
       {
         category: "Key & Mode",
@@ -90,7 +94,8 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, onBack }) => {
         value: `${music.key || "Unknown"} ${mode}`,
         explanation: mode.toLowerCase() === "major"
           ? "Major keys work well across genres"
-          : "Minor keys great for dramatic scenes"
+          : "Minor keys great for dramatic scenes",
+        aiFeedbackKey: "keyMode"
       },
       {
         category: "Danceability",
@@ -101,7 +106,8 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, onBack }) => {
           ? "High energy, great for upbeat scenes"
           : intensity.toLowerCase() === "medium"
             ? "Moderate energy, versatile for various moods"
-            : "Lower energy, works well for ambient scenes"
+            : "Lower energy, works well for ambient scenes",
+        aiFeedbackKey: "danceability"
       },
       {
         category: "Length",
@@ -112,7 +118,8 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, onBack }) => {
           ? "Perfect length for sync licensing"
           : durationMin < 2 
             ? "May be too short for some placements"
-            : "May need editing for most placements"
+            : "May need editing for most placements",
+        aiFeedbackKey: "length"
       }
     ];
 
@@ -150,27 +157,84 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, onBack }) => {
 
         {/* Breakdown Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          {breakdowns.map((item, index) => (
-            <div key={index} className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">{item.category}</h3>
-                  <p className="text-blue-600 text-sm font-medium">{item.value}</p>
-                </div>
-                <div className="text-right">
-                  <div className="text-3xl font-black text-gray-900">{item.displayScore}</div>
-                  <div className="text-sm text-gray-500">/100</div>
+          {breakdowns.map((item, index) => {
+            const feedback = aiFeedback?.[item.aiFeedbackKey];
+            const isExpanded = expandedCard === index;
+            
+            return (
+              <div key={index} className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">{item.category}</h3>
+                      <p className="text-blue-600 text-sm font-medium">{item.value}</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-3xl font-black text-gray-900">{item.displayScore}</div>
+                      <div className="text-sm text-gray-500">/100</div>
+                    </div>
+                  </div>
+                  
+                  <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-3">
+                    <div
+                      className="h-full bg-blue-600 transition-all duration-500"
+                      style={{ width: `${item.displayScore}%` }}
+                    />
+                  </div>
+
+                  {/* AI Feedback or Default Explanation */}
+                  {feedback ? (
+                    <div>
+                      <p className="text-gray-700 text-sm font-medium mb-2">
+                        {feedback.short}
+                      </p>
+                      
+                      {isExpanded && (
+                        <div className="mt-4 space-y-3 animate-fadeIn">
+                          <div className="bg-blue-50 rounded-lg p-4">
+                            <p className="text-xs font-semibold text-blue-900 mb-1">Why this score?</p>
+                            <p className="text-sm text-gray-700">{feedback.why}</p>
+                          </div>
+                          <div className="bg-green-50 rounded-lg p-4">
+                            <p className="text-xs font-semibold text-green-900 mb-1">How to improve:</p>
+                            <p className="text-sm text-gray-700">{feedback.improve}</p>
+                          </div>
+                        </div>
+                      )}
+
+                      <button
+                        onClick={() => setExpandedCard(isExpanded ? null : index)}
+                        className="mt-3 text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center gap-1 transition"
+                      >
+                        {isExpanded ? (
+                          <>
+                            Show less
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                            </svg>
+                          </>
+                        ) : (
+                          <>
+                            Learn more
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-gray-600 text-sm">{item.explanation}</p>
+                      {!aiFeedback && (
+                        <p className="text-gray-400 text-xs mt-2 italic">Loading AI insights...</p>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
-              <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-3">
-                <div
-                  className="h-full bg-blue-600 transition-all duration-500"
-                  style={{ width: `${item.displayScore}%` }}
-                />
-              </div>
-              <p className="text-gray-600 text-sm">{item.explanation}</p>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Debug Data */}
