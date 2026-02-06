@@ -240,46 +240,72 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
           })}
         </div>
 
-        {/* Debug Data */}
-        <div className="bg-gray-100 rounded-lg p-6 mb-6">
-          <h3 className="text-lg font-semibold mb-2">MusicAtlas Data (Debug):</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <h4 className="font-semibold text-sm mb-2">Music Characteristics:</h4>
-              <pre className="bg-white p-4 rounded text-xs overflow-auto max-h-64">
-                {JSON.stringify(musicAtlasRaw?.music_characteristics, null, 2)}
-              </pre>
+        {/* Next Steps Section */}
+        <div className="bg-linear-to-br from-blue-50 to-indigo-50 rounded-xl shadow-lg p-8 mb-6 border border-blue-100">
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">
+            💰 How to Generate More Revenue from Your Songs
+          </h3>
+          
+          <div className="prose prose-blue max-w-none">
+            <p className="text-gray-700 text-base leading-relaxed mb-4">
+              <strong>Sync licensing</strong> is how your music gets placed in TV shows, films, commercials, trailers, and video games. When supervisors discover your track and place it in their project, you earn upfront sync fees ranging from <strong>$500 for indie productions to $150,000+ for major campaigns</strong>. Unlike streaming (where you earn fractions of a penny per play), a single sync placement can generate serious income while exposing your music to millions of viewers.
+            </p>
+            
+            <p className="text-gray-700 text-base leading-relaxed mb-4">
+              The key is <strong>discoverability</strong>. Music supervisors search catalogs daily for the perfect track—but they need to find you first. Most artists never get heard because their music isn't in searchable, professional databases that supervisors actually use. That's the gap between having great music and getting paid for it.
+            </p>
+            
+            <p className="text-gray-700 text-base leading-relaxed">
+              <strong>SyncRep</strong> puts your music directly in front of music supervisors through a platform built specifically for sync discovery. Your tracks become searchable by mood, genre, BPM, and intensity—exactly how supervisors search when they're on deadline. Instead of hoping someone discovers you, you're positioned where the money is: in the catalogs supervisors browse every single day.
+            </p>
+          </div>
+
+          {/* Visual separator */}
+          <div className="my-6 flex items-center">
+            <div className="grow border-t border-blue-200"></div>
+            <span className="px-4 text-blue-600 font-semibold text-sm">READY TO GET DISCOVERED?</span>
+            <div className="grow border-t border-blue-200"></div>
+          </div>
+
+          {/* Stats bar */}
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="text-center p-4 bg-white rounded-lg shadow-sm">
+              <div className="text-2xl font-black text-blue-600">$500-$150K</div>
+              <div className="text-xs text-gray-600 mt-1">Per Placement</div>
             </div>
-            <div>
-              <h4 className="font-semibold text-sm mb-2">Audio Characteristics:</h4>
-              <pre className="bg-white p-4 rounded text-xs overflow-auto max-h-64">
-                {JSON.stringify(musicAtlasRaw?.audio_characteristics, null, 2)}
-              </pre>
+            <div className="text-center p-4 bg-white rounded-lg shadow-sm">
+              <div className="text-2xl font-black text-blue-600">1000s</div>
+              <div className="text-xs text-gray-600 mt-1">Active Supervisors</div>
             </div>
+            <div className="text-center p-4 bg-white rounded-lg shadow-sm">
+              <div className="text-2xl font-black text-blue-600">24/7</div>
+              <div className="text-xs text-gray-600 mt-1">Searchable Catalog</div>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="text-center mb-4">
+            <a
+              href="https://musicatlas.ai/syncrep/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-full text-lg shadow-lg transition"
+            >
+              Get in Front of Music Supervisors → Join SyncRep
+            </a>
+          </div>
+
+          {/* Back Button */}
+          <div className="text-center">
+            <button
+              onClick={onBack}
+              className="text-blue-600 hover:text-blue-800 text-lg font-medium transition"
+            >
+              ← Analyze Another Track
+            </button>
           </div>
         </div>
 
-        {/* CTA */}
-        <div className="text-center mb-4">
-          <a
-            href="https://musicatlas.ai/syncrep/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-full text-lg shadow-lg transition"
-          >
-            Get in Front of Music Supervisors → Join SyncRep
-          </a>
-        </div>
-
-        {/* Back Button */}
-        <div className="text-center">
-          <button
-            onClick={onBack}
-            className="text-blue-600 hover:text-blue-800 text-lg font-medium transition"
-          >
-            ← Analyze Another Track
-          </button>
-        </div>
       </div>
     </div>
   );
