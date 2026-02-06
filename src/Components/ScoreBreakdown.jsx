@@ -1,3 +1,4 @@
+
 import { useState, useMemo } from "react";
 
 const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
@@ -36,15 +37,15 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
     const mode = music.mode || "";
     const keyScore = mode.toLowerCase() === "major" ? 90 : 75;
 
-    // 3. Danceability Score (using perceived_intensity)
+    // 3. Vibe Score (using perceived_intensity)
     const intensityMap = {
-      "low": 70,      // Less danceable
-      "medium": 85,   // Moderate danceability
-      "high": 95,     // High danceability
-      "very high": 90 // Very energetic but maybe too intense
+      "low": 70,      // Subtle vibe
+      "medium": 85,   // Moderate vibe
+      "high": 95,     // Strong vibe
+      "very high": 90 // Intense vibe
     };
     const intensity = audio.perceived_intensity || "medium";
-    const danceabilityScore = intensityMap[intensity.toLowerCase()] || 75;
+    const vibeScore = intensityMap[intensity.toLowerCase()] || 75;
 
     // 4. Length Score (ideal: 2-3.5 minutes for sync) - Use Spotify duration
     const durationMs = track.duration_ms || 180000;
@@ -65,7 +66,7 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
 
     // Calculate final score (equal weights) with only 4 categories and cap at 99
     const rawFinalScore = Math.round(
-      (bpmScore + keyScore + danceabilityScore + lengthScore) / 4
+      (bpmScore + keyScore + vibeScore + lengthScore) / 4
     );
     const finalScore = Math.min(99, Math.max(51, rawFinalScore));
 
@@ -98,16 +99,16 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
         aiFeedbackKey: "keyMode"
       },
       {
-        category: "Danceability",
-        score: danceabilityScore,
-        displayScore: displayScore(danceabilityScore),
+        category: "Vibe",
+        score: vibeScore,
+        displayScore: displayScore(vibeScore),
         value: intensity.charAt(0).toUpperCase() + intensity.slice(1),
         explanation: intensity.toLowerCase() === "high"
           ? "High energy, great for upbeat scenes"
           : intensity.toLowerCase() === "medium"
             ? "Moderate energy, versatile for various moods"
             : "Lower energy, works well for ambient scenes",
-        aiFeedbackKey: "danceability"
+        aiFeedbackKey: "vibe"
       },
       {
         category: "Length",
