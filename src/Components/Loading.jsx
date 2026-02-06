@@ -36,11 +36,11 @@ const Loading = ({ track, onComplete }) => {
     if (currentStep === steps.length - 1) {
       const factTimer = setInterval(() => {
         setDidYouKnowIndex((prev) => (prev + 1) % didYouKnowFacts.length);
-      }, 10000); // change fact every 10 seconds
+      }, 7000); // change fact every 7 seconds
 
       const completeTimer = setTimeout(() => {
         onComplete?.();
-      }, 10000); // allow 3–4 facts to show, then complete
+      }, 28000); // allow 3–4 facts to show, then complete
 
       return () => {
         clearInterval(factTimer);
