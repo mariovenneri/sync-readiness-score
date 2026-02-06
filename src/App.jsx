@@ -52,7 +52,9 @@ function App() {
         setAiFeedback(null);
       }
 
-      setCurrentScreen("result");
+      // Loading screen will automatically transition after showing 3-5 facts
+      // via the onComplete callback
+
     } catch (error) {
       console.error("Error:", error);
       setCurrentScreen("input");
@@ -66,7 +68,10 @@ function App() {
       )}
       
       {currentScreen === "loading" && selectedTrack && (
-        <Loading track={selectedTrack} />
+        <Loading 
+          track={selectedTrack}
+          onComplete={() => setCurrentScreen("result")}
+        />
       )}
      
       {currentScreen === "result" && selectedTrack && (

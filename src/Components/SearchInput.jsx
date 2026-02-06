@@ -5,11 +5,6 @@ const SearchInput = ({ onTrackSelected }) => {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [addArtist, setAddArtist] = useState("");
-  const [addTitle, setAddTitle] = useState("");
-  const [addLoading, setAddLoading] = useState(false);
-  const [addMessage, setAddMessage] = useState("");
   const [selectedTrackFromList, setSelectedTrackFromList] = useState(null);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const inputRef = useRef(null);
@@ -208,49 +203,8 @@ const SearchInput = ({ onTrackSelected }) => {
                 >
                   SyncRep
                 </a>
-                <button
-                  onClick={() => setShowAddForm(!showAddForm)}
-                  className="bg-gray-900 opacity-95 border border-gray-900 hover:border-blue-900 hover:border hover:scale-105 text-white font-sm py-3 px-8 rounded-xl transition shadow-2xl"
-                >
-                  Can't find your song?
-                </button>
               </div>
             </div>
-
-            {/* Add Track Form */}
-            {showAddForm && (
-              <div className="mt-6 bg-blue-900/20 rounded-2xl p-6 border border-blue-500/30">
-                <h3 className="text-white text-lg font-semibold mb-4">Add Your Track to MusicAtlas</h3>
-                <form onSubmit={handleAddTrack} className="space-y-3">
-                  <input
-                    type="text"
-                    value={addArtist}
-                    onChange={(e) => setAddArtist(e.target.value)}
-                    placeholder="Artist name"
-                    required
-                    className="w-full px-4 py-3 rounded-lg bg-white/10 border border-blue-500/50 text-white placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <input
-                    type="text"
-                    value={addTitle}
-                    onChange={(e) => setAddTitle(e.target.value)}
-                    placeholder="Track title"
-                    required
-                    className="w-full px-4 py-3 rounded-lg bg-white/10 border border-blue-500/50 text-white placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                  <button
-                    type="submit"
-                    disabled={addLoading}
-                    className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 disabled:opacity-50 font-semibold"
-                  >
-                    {addLoading ? "Adding..." : "Add Track"}
-                  </button>
-                  {addMessage && (
-                    <p className="text-blue-300 text-sm text-center">{addMessage}</p>
-                  )}
-                </form>
-              </div>
-            )}
           </div>
         </div>
 
