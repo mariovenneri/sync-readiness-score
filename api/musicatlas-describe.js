@@ -8,60 +8,72 @@ export default async function handler(req, res) {
 
   const key = process.env.VITE_MUSICATLAS_KEY;
 
-  try {
-    console.log("Fetching:", artist, "-", title);
-    
-    // POST request with JSON body
-    let response = await fetch("https://musicatlas.ai/api/describe_track", {
+  const describeTrack = async () => {
+    return fetch("https://musicatlas.ai/api/describe_track", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${key}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        artist: artist,
-        track: title
-      })
+      body: JSON.stringify({ artist, track: title })
     });
+  };
 
+  const hasValidData = (data) => {
+    return (
+      data &&
+      data.music_characteristics &&
+      data.music_characteristics.bpm &&
+      data.music_characteristics.bpm > 0
+    );
+  };
+
+  try {
+    console.log("Fetching:", artist, "-", title);
+
+    let response = await describeTrack();
     console.log("Status:", response.status);
 
-    // If not found, add it
+    // Track not in MusicAtlas — add it
     if (response.status === 404) {
-      console.log("Adding track...");
-      
+      console.log("Track not found — adding to MusicAtlas...");
+
       await fetch("https://musicatlas.ai/api/add_track", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${key}`,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({
-          artist: artist,
-          title: title
-        })
+        body: JSON.stringify({ artist, title })
       });
 
-      await new Promise(r => setTimeout(r, 1000));
-      
-      // Retry
-      response = await fetch("https://musicatlas.ai/api/describe_track", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${key}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          artist: artist,
-          track: title
-        })
-      });
-      
+      // Wait 2 seconds then retry once
+      await new Promise(r => setTimeout(r, 2000));
+      response = await describeTrack();
       console.log("Retry status:", response.status);
     }
 
+    // Still not found after retry — tell the app it's processing
+    if (response.status === 404) {
+      console.log("Track still processing — returning 202");
+      return res.status(202).json({
+        status: "processing",
+        message: "Track submitted for analysis"
+      });
+    }
+
     const data = await response.json();
-    console.log("Data received:", data);
+    console.log("Data received:", JSON.stringify(data).slice(0, 100));
+
+    // Got a response but data is empty/invalid — also treating as processing
+    if (!hasValidData(data)) {
+      console.log("Track data incomplete — returning 202");
+      return res.status(202).json({
+        status: "processing",
+        message: "Track submitted for analysis"
+      });
+    }
+
     return res.json(data);
 
   } catch (error) {

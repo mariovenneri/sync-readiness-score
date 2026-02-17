@@ -1,9 +1,9 @@
-// App.jsx - Simple Business Logic with Console Logging
-
+// App.jsx
 import { useState } from "react";
 import SearchInput from "./Components/SearchInput";
 import Loading from "./Components/Loading";
 import ScoreBreakdown from "./Components/ScoreBreakdown";
+import Processing from "./Components/Processing";
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState("input");
@@ -11,24 +11,29 @@ function App() {
   const [musicAtlasRaw, setMusicAtlasRaw] = useState(null);
   const [aiFeedback, setAiFeedback] = useState(null);
 
-  
   const handleTrackSelected = async (track) => {
     console.log("=== TRACK SELECTED ===");
     console.log("Track:", track);
     console.log("Duration from Spotify (ms):", track.duration_ms);
     console.log("Duration in minutes:", track.duration_ms / 60000);
-    
+
     setSelectedTrack(track);
     setCurrentScreen("loading");
 
     try {
-      // Get MusicAtlas data
       const url = `/api/musicatlas-describe?artist=${encodeURIComponent(track.artist)}&title=${encodeURIComponent(track.title)}`;
       console.log("Fetching:", url);
-      
+
       const response = await fetch(url);
+
+      // Track was submitted but not yet processed — show processing screen
+      if (response.status === 202) {
+        console.log("Track is processing — showing processing screen");
+        setCurrentScreen("processing");
+        return;
+      }
+
       const data = await response.json();
-      
       console.log("=== MUSICATLAS DATA ===");
       console.log(JSON.stringify(data, null, 2));
 
@@ -54,34 +59,45 @@ function App() {
         setAiFeedback(null);
       }
 
-      // Loading screen will automatically transition after showing 3-5 facts
-      // via the onComplete callback
-
     } catch (error) {
       console.error("Error:", error);
       setCurrentScreen("input");
     }
   };
 
+  const handleBack = () => {
+    setCurrentScreen("input");
+    setSelectedTrack(null);
+    setMusicAtlasRaw(null);
+    setAiFeedback(null);
+  };
+
   return (
-    <div className='min-h-screen bg-white'>
+    <div className="min-h-screen bg-white">
       {currentScreen === "input" && (
         <SearchInput onTrackSelected={handleTrackSelected} />
       )}
-      
+
       {currentScreen === "loading" && selectedTrack && (
-        <Loading 
+        <Loading
           track={selectedTrack}
           onComplete={() => setCurrentScreen("result")}
         />
       )}
-     
+
       {currentScreen === "result" && selectedTrack && (
-        <ScoreBreakdown 
+        <ScoreBreakdown
           track={selectedTrack}
           musicAtlasRaw={musicAtlasRaw}
           aiFeedback={aiFeedback}
-          onBack={() => setCurrentScreen("input")}
+          onBack={handleBack}
+        />
+      )}
+
+      {currentScreen === "processing" && selectedTrack && (
+        <Processing
+          track={selectedTrack}
+          onBack={handleBack}
         />
       )}
     </div>

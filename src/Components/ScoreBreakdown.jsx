@@ -266,7 +266,7 @@ return (
               const isExpanded = expandedCard === index;
 
               return (
-                <div key={index} className="snap-center shrink-0 w-[45%] bg-gray-800/95 backdrop-blur-xl rounded-2xl shadow-xl border border-blue-700/30 overflow-hidden hover:border-blue-500/50 transition-all self-start">
+                <div key={index} className="snap-center shrink-0 w-[45%] bg-gray-800/95 backdrop-blur-xl rounded-2xl shadow-sm border border-blue-700/30 overflow-hidden hover:border-blue-500/50 transition-all self-start">
                   <div className="p-6">
                     <div className="flex justify-between items-start mb-20">
                       <div>
