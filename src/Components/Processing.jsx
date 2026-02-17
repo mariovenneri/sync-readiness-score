@@ -50,7 +50,7 @@ const Processing = ({ track, jobId, onBack, onComplete }) => {
     error: "Something went wrong"
   }[status] ?? "Processing...";
 
-  const displayPercent = Math.round((percentComplete ?? 0) * 100);
+  const displayPercent = Math.round(percentComplete ?? 0);
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4 py-8">
