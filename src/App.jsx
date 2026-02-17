@@ -1,4 +1,5 @@
 // App.jsx - Simple Business Logic with Console Logging
+
 import { useState } from "react";
 import SearchInput from "./Components/SearchInput";
 import Loading from "./Components/Loading";
@@ -10,6 +11,7 @@ function App() {
   const [musicAtlasRaw, setMusicAtlasRaw] = useState(null);
   const [aiFeedback, setAiFeedback] = useState(null);
 
+  
   const handleTrackSelected = async (track) => {
     console.log("=== TRACK SELECTED ===");
     console.log("Track:", track);
