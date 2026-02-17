@@ -19,6 +19,20 @@ export default async function handler(req, res) {
     });
   };
 
+  const addTrack = async () => {
+    const addResponse = await fetch("https://musicatlas.ai/api/add_track", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${key}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ artist, title })
+    });
+    const addData = await addResponse.json();
+    console.log("Add track response:", addData);
+    return addData.job_id || null;
+  };
+
   const hasValidData = (data) => {
     return (
       data &&
@@ -28,55 +42,42 @@ export default async function handler(req, res) {
     );
   };
 
+  const returnProcessing = (jobId) => {
+    console.log("Returning 202 with job_id:", jobId);
+    return res.status(202).json({
+      status: "processing",
+      job_id: jobId,
+      message: "Track submitted for analysis"
+    });
+  };
+
   try {
     console.log("Fetching:", artist, "-", title);
 
     let response = await describeTrack();
     console.log("Status:", response.status);
 
-    // Track not in MusicAtlas — add it
+    // Track not in MusicAtlas — add it then retry once
     if (response.status === 404) {
       console.log("Track not found — adding to MusicAtlas...");
-
-      const addResponse = await fetch("https://musicatlas.ai/api/add_track", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${key}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ artist, title })
-      });
-
-      const addData = await addResponse.json();
-      const jobId = addData.job_id || null;
-      console.log("Add track job_id:", jobId);
-
-      // Wait 2 seconds then retry once
+      const jobId = await addTrack();
       await new Promise(r => setTimeout(r, 2000));
       response = await describeTrack();
       console.log("Retry status:", response.status);
 
-      // Still not found after retry — tell the app it's processing
       if (response.status === 404) {
-        console.log("Track still processing — returning 202");
-        return res.status(202).json({
-          status: "processing",
-          job_id: jobId,
-          message: "Track submitted for analysis"
-        });
+        return returnProcessing(jobId);
       }
     }
 
     const data = await response.json();
     console.log("Data received:", JSON.stringify(data).slice(0, 100));
 
-    // Got a response but data is empty/invalid — also treating as processing
+    // Data exists but incomplete — add track to trigger reprocessing
     if (!hasValidData(data)) {
-      console.log("Track data incomplete — returning 202");
-      return res.status(202).json({
-        status: "processing",
-        message: "Track submitted for analysis"
-      });
+      console.log("Track data incomplete — adding to MusicAtlas...");
+      const jobId = await addTrack();
+      return returnProcessing(jobId);
     }
 
     return res.json(data);
