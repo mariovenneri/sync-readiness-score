@@ -10,6 +10,7 @@ function App() {
   const [selectedTrack, setSelectedTrack] = useState(null);
   const [musicAtlasRaw, setMusicAtlasRaw] = useState(null);
   const [aiFeedback, setAiFeedback] = useState(null);
+  const [jobId, setJobId] = useState(null);
 
   const handleTrackSelected = async (track) => {
     console.log("=== TRACK SELECTED ===");
@@ -26,9 +27,11 @@ function App() {
 
       const response = await fetch(url);
 
-      // Track was submitted but not yet processed — show processing screen
+      // Track submitted but not yet processed — show processing screen with job_id
       if (response.status === 202) {
-        console.log("Track is processing — showing processing screen");
+        const data = await response.json();
+        console.log("Track is processing — job_id:", data.job_id);
+        setJobId(data.job_id || null);
         setCurrentScreen("processing");
         return;
       }
@@ -65,11 +68,43 @@ function App() {
     }
   };
 
+  // Called by Processing when get_progress returns "done"
+  const handleProcessingComplete = async () => {
+    if (!selectedTrack) return;
+    setCurrentScreen("loading");
+
+    try {
+      const url = `/api/musicatlas-describe?artist=${encodeURIComponent(selectedTrack.artist)}&title=${encodeURIComponent(selectedTrack.title)}`;
+      const response = await fetch(url);
+      const data = await response.json();
+
+      setMusicAtlasRaw(data);
+
+      const feedbackResponse = await fetch('/api/generate-feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          track: selectedTrack,
+          musicAtlasData: data
+        })
+      });
+
+      if (feedbackResponse.ok) {
+        const feedback = await feedbackResponse.json();
+        setAiFeedback(feedback);
+      }
+
+    } catch (error) {
+      console.error("Error fetching after processing:", error);
+    }
+  };
+
   const handleBack = () => {
     setCurrentScreen("input");
     setSelectedTrack(null);
     setMusicAtlasRaw(null);
     setAiFeedback(null);
+    setJobId(null);
   };
 
   return (
@@ -97,7 +132,9 @@ function App() {
       {currentScreen === "processing" && selectedTrack && (
         <Processing
           track={selectedTrack}
+          jobId={jobId}
           onBack={handleBack}
+          onComplete={handleProcessingComplete}
         />
       )}
     </div>

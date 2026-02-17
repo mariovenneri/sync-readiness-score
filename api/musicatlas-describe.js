@@ -38,7 +38,7 @@ export default async function handler(req, res) {
     if (response.status === 404) {
       console.log("Track not found — adding to MusicAtlas...");
 
-      await fetch("https://musicatlas.ai/api/add_track", {
+      const addResponse = await fetch("https://musicatlas.ai/api/add_track", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${key}`,
@@ -47,19 +47,24 @@ export default async function handler(req, res) {
         body: JSON.stringify({ artist, title })
       });
 
+      const addData = await addResponse.json();
+      const jobId = addData.job_id || null;
+      console.log("Add track job_id:", jobId);
+
       // Wait 2 seconds then retry once
       await new Promise(r => setTimeout(r, 2000));
       response = await describeTrack();
       console.log("Retry status:", response.status);
-    }
 
-    // Still not found after retry — tell the app it's processing
-    if (response.status === 404) {
-      console.log("Track still processing — returning 202");
-      return res.status(202).json({
-        status: "processing",
-        message: "Track submitted for analysis"
-      });
+      // Still not found after retry — tell the app it's processing
+      if (response.status === 404) {
+        console.log("Track still processing — returning 202");
+        return res.status(202).json({
+          status: "processing",
+          job_id: jobId,
+          message: "Track submitted for analysis"
+        });
+      }
     }
 
     const data = await response.json();
