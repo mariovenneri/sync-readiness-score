@@ -12,7 +12,7 @@ export default async function handler(req, res) {
   }
 
   const apiKey = process.env.VITE_XAI_KEY;
-  
+
   if (!apiKey) {
     console.error("XAI API key not found in environment");
     return res.status(500).json({ error: "API key not configured" });
@@ -20,6 +20,7 @@ export default async function handler(req, res) {
 
   const music = musicAtlasData.music_characteristics || {};
   const audio = musicAtlasData.audio_characteristics || {};
+  const genres = musicAtlasData.genres || [];
 
   const bpm = Math.round(music.bpm || 120);
   const key = music.key || "Unknown";
@@ -29,8 +30,34 @@ export default async function handler(req, res) {
   const durationMin = Math.floor(durationMs / 60000);
   const durationSec = Math.floor((durationMs % 60000) / 1000);
 
+  // Match genre the same way ScoreBreakdown does
+  const genreMap = {
+    "hip-hop":    ["hip-hop", "hip hop", "rap", "trap", "drill"],
+    "rock":       ["rock", "alternative rock", "indie rock", "punk"],
+    "indie":      ["indie", "indie pop", "indie folk", "lo-fi", "bedroom pop"],
+    "pop":        ["pop", "synth-pop", "electropop", "dance pop"],
+    "rnb":        ["r&b", "rnb", "soul", "neo-soul"],
+    "electronic": ["electronic", "edm", "house", "techno", "ambient"],
+    "country":    ["country", "americana", "folk"],
+    "cinematic":  ["cinematic", "soundtrack", "orchestral", "score"],
+  };
+
+  let matchedGenre = null;
+  const normalizedTags = genres.map(g => g.toLowerCase().trim());
+  for (const [genre, keywords] of Object.entries(genreMap)) {
+    if (normalizedTags.some(tag => keywords.some(k => tag.includes(k)))) {
+      matchedGenre = genre;
+      break;
+    }
+  }
+
+  const genreContext = matchedGenre
+    ? `Genre: ${matchedGenre} (identified from tags: ${genres.slice(0, 3).join(", ")})`
+    : `Genre: Could not be identified from tags (${genres.slice(0, 3).join(", ")})`;
+
   console.log("Track info:", { title: track.title, artist: track.artist });
   console.log("Music data:", { bpm, key, mode, intensity });
+  console.log("Genre context:", genreContext);
 
   const prompt = `You are a music supervisor with 15+ years placing songs in TV, film, ads, and trailers. Your role is to EDUCATE artists about sync licensing, NOT to tell them to change their music.
 
@@ -41,6 +68,7 @@ TRACK DATA:
 - Key: ${key} ${mode}
 - Perceived Intensity: ${intensity}
 - Length: ${durationMin}:${durationSec.toString().padStart(2, '0')}
+- ${genreContext}
 
 YOUR MISSION: Help artists understand how THEIR music (as it exists) fits into the sync world. Show them what types of scenes their track works for and how to position it. DO NOT suggest rewriting or changing the fundamental character of the song.
 
@@ -61,48 +89,26 @@ For each category:
 CATEGORIES:
 
 1. BPM RANGE (${bpm} BPM)
+${matchedGenre ? `This is a ${matchedGenre} track. Frame tempo feedback in the context of how ${matchedGenre} tracks are used in sync.` : ""}
 EDUCATIONAL FOCUS: Explain what this tempo is naturally suited for.
-- 60-90: Emotional weight, drama, contemplative scenes
-- 90-110: Versatile, works for emotional and upbeat contexts
-- 110-130: Upbeat, commercials, feel-good moments
-- 130-150: High energy, sports, action
-- 150+: Intense action, aggressive scenes only
-
-DO NOT say "change your BPM" - instead explain what THIS BPM is good for and suggest creating ADDITIONAL versions (e.g., "Consider creating a half-time version for drama" not "make it slower").
+DO NOT say "change your BPM" - instead explain what THIS BPM is good for and suggest creating ADDITIONAL versions if relevant.
 
 2. KEY & MODE (${key} ${mode})
-CRITICAL: We are NOT interested in advice about rewriting the song or changing the mode.
-EDUCATIONAL FOCUS: Explain the unique qualities and placement opportunities for THIS key and mode.
-
-${mode.toLowerCase() === 'minor' ? `
-This track is in a MINOR key - explain why minor keys are VALUABLE for sync:
-- Perfect for dramatic scenes, tension, introspection
-- Ideal for crime dramas, thrillers, emotional moments
-- Works great for moody commercials, luxury brands
-- Don't suggest changing to major - celebrate what minor brings
-` : `
-This track is in a MAJOR key - explain the versatility:
-- Uplifting, optimistic, works across many contexts
-- Great for feel-good moments, commercials, promos
-- Versatile across genres and scene types
-`}
+CRITICAL RULES:
+- NEVER suggest changing the key or mode
+- NEVER imply one mode is better than the other
+- Both major and minor serve equally valuable and distinct purposes in sync
+- Major: bright, open tonal quality — works well for uplifting, aspirational, and commercial placements
+- Minor: emotional depth and tension — works well for dramatic, introspective, and cinematic placements
+${matchedGenre ? `For ${matchedGenre} tracks specifically, frame the mode in terms of what placement opportunities it opens up within this genre.` : ""}
+Frame the feedback around what unique placement opportunities THIS key and mode creates.
 
 3. VIBE (Perceived Intensity: ${intensity})
-EDUCATIONAL FOCUS: Explain what this energy level means for placement.
-- Low: Safe for underscore, won't compete with dialogue, perfect for beds
-- Medium: Supports narrative without dominating, most versatile
-- High: Drives action and energy, great for high-impact moments
-- Very High: Maximum impact, trailers and climactic scenes
-
-Explain what types of scenes/briefs THIS vibe naturally fits.
+${matchedGenre ? `For ${matchedGenre} tracks, frame intensity feedback around what supervisors in this genre are typically looking for.` : ""}
+EDUCATIONAL FOCUS: Explain what this energy level means for placement — every intensity level has its place.
 
 4. LENGTH (${durationMin}:${durationSec.toString().padStart(2, '0')})
 EDUCATIONAL FOCUS: Explain editorial implications and opportunities.
-- Under 2:00: Great for quick cuts, promos, may need extending for some uses
-- 2:00-3:00: Sweet spot for most placements
-- 3:00-4:00: Works for montages and emotional builds, may need editing for commercials
-- 4:00+: Album cut length, explain when this works (film, long montages) vs when edits help (commercials)
-
 Suggest creating ADDITIONAL versions (radio edit, extended, instrumental) not changing the original.
 
 TONE: Educational and empowering. Help artists understand the sync landscape and where THEIR music fits. Make them excited about their track's potential, not discouraged about what it isn't.
@@ -117,7 +123,7 @@ Return ONLY valid JSON:
 
   try {
     console.log("Calling Grok AI...");
-    
+
     const response = await fetch("https://api.x.ai/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -126,9 +132,7 @@ Return ONLY valid JSON:
       },
       body: JSON.stringify({
         model: "grok-3",
-        messages: [
-          { role: "user", content: prompt }
-        ],
+        messages: [{ role: "user", content: prompt }],
         temperature: 0.7,
         max_tokens: 1000
       })
@@ -139,11 +143,7 @@ Return ONLY valid JSON:
     if (!response.ok) {
       const errorText = await response.text();
       console.error("Grok API error:", response.status, errorText);
-      return res.status(500).json({ 
-        error: "AI API failed", 
-        details: errorText,
-        status: response.status 
-      });
+      return res.status(500).json({ error: "AI API failed", details: errorText, status: response.status });
     }
 
     const data = await response.json();
@@ -156,14 +156,12 @@ Return ONLY valid JSON:
 
     let content = data.choices[0].message.content.trim();
     console.log("Raw AI content:", content);
-    
-    // Clean up any markdown formatting
+
     content = content
       .replace(/```json\n?/g, "")
       .replace(/```\n?/g, "")
       .trim();
 
-    // Extract JSON if there's extra text
     const jsonStart = content.indexOf("{");
     const jsonEnd = content.lastIndexOf("}") + 1;
     if (jsonStart !== -1 && jsonEnd > jsonStart) {
@@ -174,15 +172,12 @@ Return ONLY valid JSON:
 
     const feedback = JSON.parse(content);
     console.log("Feedback parsed successfully");
-    
+
     return res.json(feedback);
 
   } catch (error) {
     console.error("Error generating feedback:", error);
     console.error("Error stack:", error.stack);
-    return res.status(500).json({ 
-      error: "Failed to generate feedback",
-      message: error.message 
-    });
+    return res.status(500).json({ error: "Failed to generate feedback", message: error.message });
   }
 }
