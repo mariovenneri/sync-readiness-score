@@ -26,10 +26,17 @@ export default async function handler(req, res) {
         "Authorization": `Bearer ${key}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ artist, title })
+      body: JSON.stringify({ artist, track })
     });
     const addData = await addResponse.json();
     console.log("Add track FULL response:", JSON.stringify(addData, null, 2));
+    
+    // Check if track was rejected
+    if (addData.success === false) {
+      console.log("Track rejected:", addData.error);
+      return null;
+    }
+    
     return addData.job_id || null;
   };
 
@@ -44,6 +51,14 @@ export default async function handler(req, res) {
 
   const returnProcessing = (jobId) => {
     console.log("Returning 202 with job_id:", jobId);
+    
+    // If no job_id, track was rejected - return 404 instead
+    if (!jobId) {
+      return res.status(404).json({
+        error: "Track not available for analysis"
+      });
+    }
+    
     return res.status(202).json({
       status: "processing",
       job_id: jobId,

@@ -51,6 +51,14 @@ function App() {
 
       const response = await fetch(url);
 
+      // Track was rejected by MusicAtlas (not available for analysis)
+      if (response.status === 404) {
+        console.log("Track not available for analysis");
+        alert("This track isn't available for analysis yet. It may not be released or publicly available on streaming platforms.");
+        setCurrentScreen("input");
+        return;
+      }
+
       // Track submitted but not yet processed — show processing screen with job_id
       if (response.status === 202) {
         const data = await response.json();
