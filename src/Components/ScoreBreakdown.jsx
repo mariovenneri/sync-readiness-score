@@ -55,15 +55,16 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
 
     // Ideal BPM ranges per genre [min, sweet-min, sweet-max, max]
     const bpmRanges = {
-      "hip-hop":    [60,  80,  100, 115],
-      "rock":       [100, 120, 150, 170],
-      "indie":      [80,  100, 130, 150],
-      "pop":        [90,  105, 130, 145],
-      "rnb":        [55,  70,  100, 115],
-      "electronic": [110, 120, 140, 160],
-      "country":    [70,  90,  130, 150],
-      "cinematic":  [40,  60,  100, 130],
+      "hip-hop":    [60, 75, 105, 140],
+      "rock":       [95, 115, 150, 175],
+      "indie":      [70, 95, 130, 155],
+      "pop":        [90, 105, 130, 145],
+      "rnb":        [55, 70, 100, 120],
+      "electronic": [90, 115, 140, 180],
+      "country":    [70, 90, 130, 150],
+      "cinematic":  [40, 60, 100, 130],
     };
+
 
     // Default range when no genre matched
     const defaultRange = [70, 90, 140, 160];
@@ -90,44 +91,42 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
     }
 
     // ─────────────────────────────────────────
-    // 2. KEY & MODE SCORE
-    // Mode matters more than key.
-    // Key only adjusts score by ±2 points max.
-    // Genre context determines whether minor
-    // is penalized or celebrated.
+    // 2. KEY & MODE SCORE (UPDATED FOR SYNC)
+    // Mode influences emotional placement demand.
+    // Minor slightly preferred in cinematic/hip-hop/electronic.
+    // Key letter only nudges ±2 and respects relative minors.
     // ─────────────────────────────────────────
     const mode = (music.mode || "").toLowerCase();
     const key = (music.key || "").trim();
 
-    // Which genres treat minor as equally valid or preferred
-    const minorFriendlyGenres = ["hip-hop", "rnb", "rock", "indie", "cinematic", "electronic"];
+    // Genres where minor is extremely common in sync placements
+    const minorDominantGenres = ["hip-hop", "rnb", "cinematic", "electronic"];
 
-    // Which genres lean strongly major
+    // Genres where both modes are equally fine
+    const neutralModeGenres = ["rock", "indie"];
+
+    // Genres leaning major
     const majorLeaningGenres = ["pop", "country"];
 
     let keyModeScore;
 
-    if (mode === "major") {
-      // Major is universally versatile — strong base score
-      keyModeScore = 88;
-    } else if (mode === "minor") {
-      if (minorFriendlyGenres.includes(matchedGenre)) {
-        // Minor is completely normal here — no penalty
-        keyModeScore = 88;
-      } else if (majorLeaningGenres.includes(matchedGenre)) {
-        // Minor is less common but still valid — small contextual penalty
-        keyModeScore = 82;
-      } else {
-        // No genre match — neutral treatment
-        keyModeScore = 85;
-      }
-    } else {
-      // Unknown mode — neutral
+    if (mode === "minor") {
+      if (minorDominantGenres.includes(matchedGenre)) keyModeScore = 90;
+      else if (neutralModeGenres.includes(matchedGenre)) keyModeScore = 88;
+      else if (majorLeaningGenres.includes(matchedGenre)) keyModeScore = 84;
+      else keyModeScore = 86;
+    }
+    else if (mode === "major") {
+      if (majorLeaningGenres.includes(matchedGenre)) keyModeScore = 88;
+      else if (neutralModeGenres.includes(matchedGenre)) keyModeScore = 88;
+      else if (minorDominantGenres.includes(matchedGenre)) keyModeScore = 84;
+      else keyModeScore = 86;
+    }
+    else {
       keyModeScore = 80;
     }
 
-    // Key commonality adjustment — ±2 points max
-    // Common keys per genre (just the most frequently used in sync)
+    // Key commonality adjustment — ±2 max
     const commonKeys = {
       "hip-hop":    ["C", "F", "G", "Bb", "Eb"],
       "rock":       ["E", "A", "D", "G", "C"],
@@ -139,10 +138,21 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
       "cinematic":  ["C", "D", "G", "A", "E"],
     };
 
-    if (matchedGenre && commonKeys[matchedGenre]) {
-      const isCommonKey = commonKeys[matchedGenre].includes(key);
-      keyModeScore += isCommonKey ? 2 : -2;
+    // relative minor equivalents
+    const relativeMinors = {
+      "C":"A","G":"E","D":"B","A":"F#","E":"C#",
+      "F":"D","Bb":"G","Eb":"C","Ab":"F","Db":"Bb","Gb":"Eb"
+    };
+
+    if (matchedGenre && commonKeys[matchedGenre] && key) {
+      const rel = relativeMinors[key];
+      const isCommon =
+        commonKeys[matchedGenre].includes(key) ||
+        (rel && commonKeys[matchedGenre].includes(rel));
+
+      keyModeScore += isCommon ? 2 : -2;
     }
+
 
     // ─────────────────────────────────────────
     // 3. VIBE SCORE
