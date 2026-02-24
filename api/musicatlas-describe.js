@@ -29,7 +29,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({ artist, title })
     });
     const addData = await addResponse.json();
-    console.log("Add track response:", addData);
+    console.log("Add track FULL response:", JSON.stringify(addData, null, 2));
     return addData.job_id || null;
   };
 
