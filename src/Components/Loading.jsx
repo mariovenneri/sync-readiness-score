@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 const Loading = ({ track, onComplete }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [hasLooped, setHasLooped] = useState(false);
-  
+
   const [shuffledFacts] = useState(() => {
     // Fisher-Yates shuffle algorithm
     const facts = [
@@ -43,10 +43,10 @@ const Loading = ({ track, onComplete }) => {
   });
 
   const steps = [
-    "Analyzing audio fingerprint...",
-    "Detecting key and tempo...",
-    "Mapping emotional characteristics...",
-    "Evaluating sync placement potential...",
+    "Analyzing mood and energy...",
+    "Detecting key and mode...",
+    "Measuring BPM & rhythm...",
+    "Evaluating length & structure...",
     "Generating supervisor insights..."
   ];
 
@@ -60,13 +60,13 @@ const Loading = ({ track, onComplete }) => {
       // First fact shown after steps complete
       const timer = setTimeout(() => {
         setCurrentStep(prev => prev + 1);
-      }, 2000);
+      }, 6000);
       return () => clearTimeout(timer);
     } else if (currentStep < steps.length + shuffledFacts.length) {
       // Cycling through facts
       const timer = setTimeout(() => {
         setCurrentStep(prev => prev + 1);
-      }, 4000);
+      }, 6000);
       return () => clearTimeout(timer);
     } else {
       // All facts shown once — mark as looped
@@ -90,11 +90,11 @@ const Loading = ({ track, onComplete }) => {
     : null;
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center p-6 sm:p-12 relative overflow-hidden">
+    <div className="min-h-screen bg-white flex items-center justify-center p-6 sm:p-12 relative overflow-hidden">
       
       {/* Track Info Card */}
       <div className="relative z-10 w-full max-w-2xl text-center">
-        <div className="bg-gray-800/90 backdrop-blur-xl rounded-3xl shadow-2xl p-8 sm:p-12 border border-blue-500/20">
+        <div className="bg-gray-800/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 sm:p-12 border border-blue-500/20">
           
           {/* Album Art */}
           {track.artwork && (
@@ -108,10 +108,10 @@ const Loading = ({ track, onComplete }) => {
           )}
 
           {/* Track Title */}
-          <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
+          <h2 className="text-xl sm:text-2xl font-bold text-white mb-2 tracking-tight">
             "{track.title}"
           </h2>
-          <p className="text-blue-300 text-base sm:text-lg mb-6 sm:mb-8">
+          <p className="text-blue-300 text-base sm:text-lg mb-6 sm:mb-8 tracking-tight">
             by {track.artist}
           </p>
 
@@ -136,16 +136,23 @@ const Loading = ({ track, onComplete }) => {
             </p>
           )}
 
+          
+              
+                
           {/* "Did you know?" Fact - Only show if we have one and haven't looped */}
           {!hasLooped && currentFact && (
             <>
               {/* Blue overlay layer at bottom - only when showing facts */}
               <div 
-                className="absolute inset-x-0 bottom-0 h-1/3 bg-blue-900/40 -z-10"
-                style={{ clipPath: "polygon(0 30%, 100% 0%, 100% 100%, 0% 100%)" }}
+                className="absolute inset-x-0 bottom-0 h-1/3 bg-blue-900/40 rounded-b-3xl -z-10"
               />
               
-              <div className="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-blue-500/30">
+              <div className="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-blue-500/30 flex gap-3">
+              <span className="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-yellow-500/20 text-yellow-400 hover:text-yellow-300 hover:bg-amber-600/40 shrink-0">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                </span>
                 <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
                   {currentFact}
                 </p>
