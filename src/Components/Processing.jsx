@@ -8,6 +8,16 @@ const Processing = ({ track, jobId, onBack, onComplete }) => {
   const [errorMessage, setErrorMessage] = useState(null);
   const intervalRef = useRef(null);
 
+  // Store job_id in localStorage so we can resume if user comes back
+  useEffect(() => {
+    if (jobId && track?.id) {
+      localStorage.setItem(
+        `processing_${track.id}`,
+        JSON.stringify({ jobId, timestamp: Date.now() })
+      );
+    }
+  }, [jobId, track?.id]);
+
   useEffect(() => {
     if (!jobId) return;
 
@@ -24,11 +34,19 @@ const Processing = ({ track, jobId, onBack, onComplete }) => {
 
         if (data.status === "done") {
           clearInterval(intervalRef.current);
+          // Clean up localStorage
+          if (track?.id) {
+            localStorage.removeItem(`processing_${track.id}`);
+          }
           setTimeout(() => onComplete(), 1500);
         }
 
         if (data.status === "error") {
           clearInterval(intervalRef.current);
+          // Clean up localStorage
+          if (track?.id) {
+            localStorage.removeItem(`processing_${track.id}`);
+          }
           setErrorMessage(data.message || "Something went wrong analyzing this track.");
         }
 
@@ -41,7 +59,7 @@ const Processing = ({ track, jobId, onBack, onComplete }) => {
     intervalRef.current = setInterval(poll, 3000);
 
     return () => clearInterval(intervalRef.current);
-  }, [jobId]);
+  }, [jobId, onComplete, track?.id]);
 
   const statusLabel = {
     queued: "Queued for analysis...",
@@ -123,13 +141,13 @@ const Processing = ({ track, jobId, onBack, onComplete }) => {
               )}
             </div>
 
-            {/* Back button - hidden when done */}
+            {/* Back button - hidden when done, updated text */}
             {status !== "done" && (
               <button
                 onClick={onBack}
                 className="inline-block bg-blue-600 hover:bg-blue-500 hover:scale-105 text-white font-bold py-3 px-8 sm:py-4 sm:px-10 rounded-full text-base sm:text-lg shadow-2xl transition-all duration-300"
               >
-                ← Search Another Track
+                ← Search Another Track<span className="text-blue-200 text-sm ml-2">(analysis continues)</span>
               </button>
             )}
 

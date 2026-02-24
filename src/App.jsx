@@ -19,6 +19,30 @@ function App() {
     console.log("Duration in minutes:", track.duration_ms / 60000);
 
     setSelectedTrack(track);
+
+    // Check if this track has a pending job in localStorage (within last 10 minutes)
+    const cachedJob = localStorage.getItem(`processing_${track.id}`);
+    if (cachedJob) {
+      try {
+        const { jobId, timestamp } = JSON.parse(cachedJob);
+        const age = Date.now() - timestamp;
+        const tenMinutes = 10 * 60 * 1000;
+        
+        if (age < tenMinutes && jobId) {
+          console.log("Resuming pending job:", jobId);
+          setJobId(jobId);
+          setCurrentScreen("processing");
+          return;
+        } else {
+          // Job expired, clean it up
+          localStorage.removeItem(`processing_${track.id}`);
+        }
+      } catch (e) {
+        console.error("Error parsing cached job:", e);
+        localStorage.removeItem(`processing_${track.id}`);
+      }
+    }
+
     setCurrentScreen("loading");
 
     try {

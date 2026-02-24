@@ -15,12 +15,6 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
     const audio = musicAtlasRaw.audio_characteristics || {};
     const genres = musicAtlasRaw.genres || [];
 
-    // ─────────────────────────────────────────
-    // GENRE MATCHING
-    // Scan all MusicAtlas genre tags and match
-    // against known sync-relevant genres.
-    // If nothing matches, a small penalty applies.
-    // ─────────────────────────────────────────
     const genreMap = {
       "hip-hop":     ["hip-hop", "hip hop", "rap", "trap", "drill", "boom bap"],
       "rock":        ["rock", "alternative rock", "indie rock", "punk", "hard rock", "classic rock"],
@@ -45,15 +39,8 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
       }
     }
 
-    // ─────────────────────────────────────────
-    // 1. BPM SCORE
-    // Curve-based scoring with genre-specific
-    // ideal ranges. Closer to the genre sweet
-    // spot = higher score. No hard brackets.
-    // ─────────────────────────────────────────
     const bpm = Math.round(music.bpm || 0);
 
-    // Ideal BPM ranges per genre [min, sweet-min, sweet-max, max]
     const bpmRanges = {
       "hip-hop":    [60, 75, 105, 140],
       "rock":       [95, 115, 150, 175],
@@ -65,8 +52,6 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
       "cinematic":  [40, 60, 100, 130],
     };
 
-
-    // Default range when no genre matched
     const defaultRange = [70, 90, 140, 160];
     const [rMin, sMin, sMax, rMax] = matchedGenre
       ? bpmRanges[matchedGenre]
@@ -74,38 +59,24 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
 
     let bpmScore;
     if (bpm >= sMin && bpm <= sMax) {
-      // In the sweet spot — score based on how centered it is
       const center = (sMin + sMax) / 2;
       const distFromCenter = Math.abs(bpm - center);
       const halfRange = (sMax - sMin) / 2;
       bpmScore = 99 - Math.round((distFromCenter / halfRange) * 10);
     } else if (bpm >= rMin && bpm <= rMax) {
-      // Outside sweet spot but still acceptable
       bpmScore = 78 - Math.round(
         (Math.min(Math.abs(bpm - sMin), Math.abs(bpm - sMax)) / (rMax - rMin)) * 15
       );
     } else {
-      // Outside acceptable range entirely
       const distOutside = Math.min(Math.abs(bpm - rMin), Math.abs(bpm - rMax));
       bpmScore = Math.max(52, 65 - Math.round(distOutside * 0.8));
     }
 
-    // ─────────────────────────────────────────
-    // 2. KEY & MODE SCORE (UPDATED FOR SYNC)
-    // Mode influences emotional placement demand.
-    // Minor slightly preferred in cinematic/hip-hop/electronic.
-    // Key letter only nudges ±2 and respects relative minors.
-    // ─────────────────────────────────────────
     const mode = (music.mode || "").toLowerCase();
     const key = (music.key || "").trim();
 
-    // Genres where minor is extremely common in sync placements
     const minorDominantGenres = ["hip-hop", "rnb", "cinematic", "electronic"];
-
-    // Genres where both modes are equally fine
     const neutralModeGenres = ["rock", "indie"];
-
-    // Genres leaning major
     const majorLeaningGenres = ["pop", "country"];
 
     let keyModeScore;
@@ -126,7 +97,6 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
       keyModeScore = 80;
     }
 
-    // Key commonality adjustment — ±2 max
     const commonKeys = {
       "hip-hop":    ["C", "F", "G", "Bb", "Eb"],
       "rock":       ["E", "A", "D", "G", "C"],
@@ -138,7 +108,6 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
       "cinematic":  ["C", "D", "G", "A", "E"],
     };
 
-    // relative minor equivalents
     const relativeMinors = {
       "C":"A","G":"E","D":"B","A":"F#","E":"C#",
       "F":"D","Bb":"G","Eb":"C","Ab":"F","Db":"Bb","Gb":"Eb"
@@ -153,17 +122,8 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
       keyModeScore += isCommon ? 2 : -2;
     }
 
-
-    // ─────────────────────────────────────────
-    // 3. VIBE SCORE
-    // Intensity weighted against what's most
-    // placeable in the matched genre.
-    // No intensity is inherently better —
-    // just more or less suited per genre.
-    // ─────────────────────────────────────────
     const intensity = (audio.perceived_intensity || "medium").toLowerCase();
 
-    // Ideal intensities per genre (in order of preference)
     const vibePreferences = {
       "hip-hop":    { "high": 95, "medium": 90, "low": 75, "very high": 85 },
       "rock":       { "high": 97, "very high": 92, "medium": 82, "low": 70 },
@@ -175,34 +135,25 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
       "cinematic":  { "low": 95, "medium": 92, "high": 80, "very high": 72 },
     };
 
-    // Default when no genre matched
     const defaultVibe = { "medium": 88, "high": 85, "low": 78, "very high": 80 };
 
     const vibeLookup = matchedGenre ? vibePreferences[matchedGenre] : defaultVibe;
     const vibeScore = vibeLookup[intensity] ?? 78;
 
-    // ─────────────────────────────────────────
-    // 4. LENGTH SCORE
-    // Curve toward the 2:30-3:00 sweet spot.
-    // Scores taper off smoothly outside it.
-    // ─────────────────────────────────────────
     const durationMs = track.duration_ms || 180000;
     const durationMin = durationMs / 60000;
     const durationSec = Math.floor((durationMs % 60000) / 1000);
 
     let lengthScore;
     if (durationMin >= 2.5 && durationMin <= 3.0) {
-      // Perfect sweet spot
       lengthScore = 99;
     } else if (durationMin >= 2.0 && durationMin <= 3.5) {
-      // Very good — taper from sweet spot edges
       const distFromSweet = Math.min(
         Math.abs(durationMin - 2.5),
         Math.abs(durationMin - 3.0)
       );
       lengthScore = 99 - Math.round(distFromSweet * 16);
     } else if (durationMin >= 1.5 && durationMin <= 4.0) {
-      // Acceptable — steeper taper
       const distFromGood = Math.min(
         Math.abs(durationMin - 2.0),
         Math.abs(durationMin - 3.5)
@@ -214,12 +165,6 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
       lengthScore = 55;
     }
 
-    // ─────────────────────────────────────────
-    // FINAL SCORE
-    // Equal weight across all 4 categories.
-    // 3 point penalty if no genre was matched.
-    // Capped between 51-99.
-    // ─────────────────────────────────────────
     const genrePenalty = matchedGenre ? 0 : 3;
     const rawFinalScore = Math.round(
       (bpmScore + keyModeScore + vibeScore + lengthScore) / 4
@@ -233,10 +178,6 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
       return Math.min(99, Math.max(51, score));
     };
 
-    // ─────────────────────────────────────────
-    // BREAKDOWN EXPLANATIONS
-    // Genre-aware, mode-respectful, educational
-    // ─────────────────────────────────────────
     const bpmExplanation = (() => {
       if (bpm >= sMin && bpm <= sMax) {
         return matchedGenre
@@ -247,6 +188,8 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
       }
       return "Tempo may limit placement opportunities in this genre";
     })();
+
+    const minorFriendlyGenres = minorDominantGenres.concat(neutralModeGenres);
 
     const keyExplanation = (() => {
       const modeLabel = mode === "major" ? "Major" : mode === "minor" ? "Minor" : mode;
@@ -316,7 +259,6 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
     return { finalScore, breakdowns, matchedGenre };
   }, [musicAtlasRaw]);
 
-  // Pull genre + popularity for dynamic paragraph
   const primaryGenre = matchedGenre || musicAtlasRaw?.genres?.[0] || null;
   const popularity = track?.popularity ?? null;
 
@@ -326,6 +268,25 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
     : popularity >= 25 ? "emerging"
     : "under-the-radar"
     : null;
+
+  // DAMAGE CONTROL — hide genre/popularity sentence if data is harsh or nonsensical
+  const shouldShowGenrePopularity = (() => {
+    const invalidGenreTags = [
+      "not sure", "female vocalists", "male vocalists", "unknown",
+      "female vocalist", "male vocalist", "instrumental", "singer-songwriter"
+    ];
+    
+    if (primaryGenre && invalidGenreTags.includes(primaryGenre.toLowerCase().trim())) {
+      return false;
+    }
+    
+    if (popularity !== null && popularity <= 5) {
+      return false;
+    }
+    
+    return (primaryGenre && !invalidGenreTags.includes(primaryGenre.toLowerCase().trim())) 
+           || (popularity !== null && popularity > 5);
+  })();
 
   if (!musicAtlasRaw) {
     return (
@@ -341,7 +302,6 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
     <div className="min-h-screen bg-white flex items-center justify-center px-2 py-6 sm:py-8">
       <div className="">
       <div className="w-full max-w-5xl">
-        {/* Main Score Card */}
         <div className="bg-gray-800/95 rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-10 mb-4 sm:mb-6 relative overflow-hidden">
           <div className="relative z-10">
             <p className="text-blue-300 text-sm sm:text-lg mb-1 font-semibold">Sync Readiness Score for</p>
@@ -351,7 +311,6 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
               <p className="text-xs sm:text-sm text-gray-400 italic">Analyzed by music supervisor AI</p>
             )}
 
-            {/* Big Score Display */}
             <div className="text-center mb-6 sm:mb-8 mt-4 sm:mt-6">
               <div className="text-6xl sm:text-7xl lg:text-8xl font-black text-white">{finalScore}</div>
               <div className="text-2xl sm:text-3xl font-bold text-blue-300">/ 100</div>
@@ -362,10 +321,7 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
           </div>
         </div>
 
-        {/* Breakdown Cards */}
         <div className="mb-4 sm:mb-6">
-
-          {/* Mobile/Tablet: Stacked */}
           <div className="md:hidden grid grid-cols-1 gap-3 sm:gap-4">
             {breakdowns.map((item, index) => {
               const feedback = aiFeedback?.[item.aiFeedbackKey];
@@ -430,7 +386,6 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
             })}
           </div>
 
-          {/* Desktop: Horizontal Scroller */}
           <div className="hidden md:block overflow-x-scroll snap-x snap-mandatory scrollbar-hide">
             <div className="flex gap-4 pb-2">
               {breakdowns.map((item, index) => {
@@ -498,14 +453,13 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
           </div>
         </div>
 
-        {/* Next Steps Section */}
         <div className="bg-gray-800/95 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 mb-4 sm:mb-6 border border-blue-500/30">
           <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 sm:mb-4">
             How to Generate More Revenue from Your Songs?
           </h3>
 
           <div className="prose prose-blue max-w-none mb-4 sm:mb-6">
-            {(primaryGenre || popularity !== null) && (
+            {shouldShowGenrePopularity && (
               <p className="text-blue-200 text-sm sm:text-base leading-relaxed mb-3 pb-3 border-b border-blue-500/20">
                 {primaryGenre && popularity !== null ? (
                   <>Your track is a <strong className="text-white">{primaryGenre}</strong> song with a Spotify popularity score of <strong className="text-blue-300">{popularity}/100</strong> — a <strong className="text-white">{popularityLabel}</strong> track in a genre that supervisors are actively searching for.</>
