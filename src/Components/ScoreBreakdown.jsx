@@ -30,10 +30,12 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
     let matchedGenre = null;
     const normalizedTags = genres.map(g => g.toLowerCase().trim());
 
+    // Match using exact phrase matching to avoid "folk rock" matching "rock"
     outer:
     for (const [genre, keywords] of Object.entries(genreMap)) {
       for (const tag of normalizedTags) {
-        if (keywords.some(k => tag.includes(k))) {
+        // Check if tag exactly matches any keyword
+        if (keywords.includes(tag)) {
           matchedGenre = genre;
           break outer;
         }

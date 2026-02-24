@@ -45,8 +45,10 @@ export default async function handler(req, res) {
 
   let matchedGenre = null;
   const normalizedTags = genres.map(g => g.toLowerCase().trim());
+  
+  // Match using exact phrase matching
   for (const [genre, keywords] of Object.entries(genreMap)) {
-    if (normalizedTags.some(tag => keywords.some(k => tag.includes(k)))) {
+    if (normalizedTags.some(tag => keywords.includes(tag))) {
       matchedGenre = genre;
       break;
     }
