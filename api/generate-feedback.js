@@ -34,11 +34,12 @@ export default async function handler(req, res) {
   const genreMap = {
     "hip-hop":    ["hip-hop", "hip hop", "rap", "trap", "drill"],
     "rock":       ["rock", "alternative rock", "indie rock", "punk"],
+    "folk":       ["folk rock", "folk", "singer-songwriter", "acoustic"],
     "indie":      ["indie", "indie pop", "indie folk", "lo-fi", "bedroom pop"],
     "pop":        ["pop", "synth-pop", "electropop", "dance pop"],
     "rnb":        ["r&b", "rnb", "soul", "neo-soul"],
     "electronic": ["electronic", "edm", "house", "techno", "ambient"],
-    "country":    ["country", "americana", "folk"],
+    "country":    ["country", "americana", "bluegrass"],
     "cinematic":  ["cinematic", "soundtrack", "orchestral", "score"],
   };
 

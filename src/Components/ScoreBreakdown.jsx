@@ -18,11 +18,12 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
     const genreMap = {
       "hip-hop":     ["hip-hop", "hip hop", "rap", "trap", "drill", "boom bap"],
       "rock":        ["rock", "alternative rock", "indie rock", "punk", "hard rock", "classic rock"],
+      "folk":        ["folk rock", "folk", "singer-songwriter", "acoustic"],
       "indie":       ["indie", "indie pop", "indie folk", "lo-fi", "lo fi", "bedroom pop"],
       "pop":         ["pop", "synth-pop", "electropop", "dance pop", "teen pop"],
       "rnb":         ["r&b", "rnb", "soul", "neo-soul", "contemporary r&b"],
       "electronic":  ["electronic", "edm", "house", "techno", "ambient", "downtempo", "chillout"],
-      "country":     ["country", "americana", "folk", "bluegrass"],
+      "country":     ["country", "americana", "bluegrass"],
       "cinematic":   ["cinematic", "soundtrack", "orchestral", "score", "instrumental"],
     };
 
@@ -44,6 +45,7 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
     const bpmRanges = {
       "hip-hop":    [60, 75, 105, 140],
       "rock":       [95, 115, 150, 175],
+      "folk":       [65, 80, 130, 150],
       "indie":      [70, 95, 130, 155],
       "pop":        [90, 105, 130, 145],
       "rnb":        [55, 70, 100, 120],
@@ -76,7 +78,7 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
     const key = (music.key || "").trim();
 
     const minorDominantGenres = ["hip-hop", "rnb", "cinematic", "electronic"];
-    const neutralModeGenres = ["rock", "indie"];
+    const neutralModeGenres = ["rock", "indie", "folk"];
     const majorLeaningGenres = ["pop", "country"];
 
     let keyModeScore;
@@ -100,6 +102,7 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
     const commonKeys = {
       "hip-hop":    ["C", "F", "G", "Bb", "Eb"],
       "rock":       ["E", "A", "D", "G", "C"],
+      "folk":       ["G", "C", "D", "A", "E"],
       "indie":      ["C", "G", "D", "A", "E"],
       "pop":        ["C", "G", "A", "F", "D"],
       "rnb":        ["F", "Bb", "Eb", "Ab", "C"],
@@ -127,6 +130,7 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
     const vibePreferences = {
       "hip-hop":    { "high": 95, "medium": 90, "low": 75, "very high": 85 },
       "rock":       { "high": 97, "very high": 92, "medium": 82, "low": 70 },
+      "folk":       { "medium": 93, "low": 92, "high": 78, "very high": 68 },
       "indie":      { "medium": 95, "low": 90, "high": 80, "very high": 70 },
       "pop":        { "medium": 95, "high": 90, "low": 78, "very high": 82 },
       "rnb":        { "low": 92, "medium": 95, "high": 78, "very high": 68 },
