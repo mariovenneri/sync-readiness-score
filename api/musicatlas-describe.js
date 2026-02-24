@@ -26,7 +26,7 @@ export default async function handler(req, res) {
         "Authorization": `Bearer ${key}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ artist, track })
+      body: JSON.stringify({ artist, track: title })
     });
     const addData = await addResponse.json();
     console.log("Add track FULL response:", JSON.stringify(addData, null, 2));
