@@ -11,6 +11,7 @@ function App() {
   const [musicAtlasRaw, setMusicAtlasRaw] = useState(null);
   const [aiFeedback, setAiFeedback] = useState(null);
   const [jobId, setJobId] = useState(null);
+  const [dataReady, setDataReady] = useState(false);
 
   const handleTrackSelected = async (track) => {
     console.log("=== TRACK SELECTED ===");
@@ -89,9 +90,11 @@ function App() {
         const feedback = await feedbackResponse.json();
         console.log("AI Feedback:", feedback);
         setAiFeedback(feedback);
+        setDataReady(true); // Signal that all data is ready
       } else {
         console.error("Failed to generate feedback");
         setAiFeedback(null);
+        setDataReady(true); // Still ready even without AI feedback
       }
 
     } catch (error) {
@@ -124,6 +127,9 @@ function App() {
       if (feedbackResponse.ok) {
         const feedback = await feedbackResponse.json();
         setAiFeedback(feedback);
+        setDataReady(true);
+      } else {
+        setDataReady(true);
       }
 
     } catch (error) {
@@ -137,6 +143,7 @@ function App() {
     setMusicAtlasRaw(null);
     setAiFeedback(null);
     setJobId(null);
+    setDataReady(false);
   };
 
   return (
@@ -148,6 +155,7 @@ function App() {
       {currentScreen === "loading" && selectedTrack && (
         <Loading
           track={selectedTrack}
+          dataReady={dataReady}
           onComplete={() => setCurrentScreen("result")}
         />
       )}

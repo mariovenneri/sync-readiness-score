@@ -1,7 +1,7 @@
 // Components/Loading.jsx
 import { useState, useEffect } from "react";
 
-const Loading = ({ track, onComplete }) => {
+const Loading = ({ track, dataReady = false, onComplete }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [hasLooped, setHasLooped] = useState(false);
 
@@ -66,6 +66,12 @@ const Loading = ({ track, onComplete }) => {
       // Cycling through facts
       const timer = setTimeout(() => {
         setCurrentStep(prev => prev + 1);
+        
+        // Check if we should transition after this fact
+        const currentFactIndex = currentStep + 1 - steps.length;
+        if (currentFactIndex >= 5 && dataReady) {
+          onComplete();
+        }
       }, 6000);
       return () => clearTimeout(timer);
     } else {
@@ -79,7 +85,7 @@ const Loading = ({ track, onComplete }) => {
       }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [currentStep, onComplete, hasLooped]);
+  }, [currentStep, onComplete, hasLooped, dataReady, steps.length, shuffledFacts.length]);
 
   const currentStepText = currentStep < steps.length 
     ? steps[currentStep]
@@ -144,7 +150,7 @@ const Loading = ({ track, onComplete }) => {
             <>
               {/* Blue overlay layer at bottom - only when showing facts */}
               <div 
-                className="absolute inset-x-0 bottom-0 h-1/3 bg-blue-900/40 rounded-b-3xl -z-10"
+                className="absolute inset-x-0 bottom-0 h-1/4 bg-blue-900/40 rounded-b-3xl -z-10"
               />
               
               <div className="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-blue-500/30 flex gap-3">

@@ -50,15 +50,15 @@ export default async function handler(req, res) {
   };
 
   const returnProcessing = (jobId) => {
-    console.log("Returning 202 with job_id:", jobId);
-    
     // If no job_id, track was rejected - return 404 instead
     if (!jobId) {
+      console.log("Returning 404 - track rejected by MusicAtlas");
       return res.status(404).json({
         error: "Track not available for analysis"
       });
     }
     
+    console.log("Returning 202 with job_id:", jobId);
     return res.status(202).json({
       status: "processing",
       job_id: jobId,
