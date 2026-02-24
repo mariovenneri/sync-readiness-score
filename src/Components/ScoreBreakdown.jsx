@@ -299,8 +299,17 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
   }
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-2 py-6 sm:py-8">
-      <div className="">
+    <div className="min-h-screen bg-white flex items-center justify-center px-2 py-6 sm:py-8 relative overflow-hidden">
+      {/* Animated background gradient - matching Loading */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -inset-2.5 opacity-20">
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
+          <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
+          <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
+        </div>
+      </div>
+
+      <div className="relative z-10">
       <div className="w-full max-w-5xl">
         <div className="bg-gray-800/95 rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-10 mb-4 sm:mb-6 relative overflow-hidden">
           <div className="relative z-10">
