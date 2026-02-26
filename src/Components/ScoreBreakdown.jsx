@@ -319,7 +319,7 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
       <div className="w-full max-w-5xl">
         <div className="bg-gray-800/95 rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-10 mb-4 sm:mb-6 relative overflow-hidden">
           <div className="relative z-10">
-            <p className="text-blue-300 text-sm sm:text-lg mb-1 font-semibold">Sync Readiness Score for</p>
+            <p className="text-blue-300 text-sm sm:text-lg mb-1 font-semibold">Song Sync Score for</p>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-1 tracking-tight leading-tight">"{track.title}"</h2>
             <p className="text-blue-300 text-base sm:text-lg mb-2">by {track.artist}</p>
             {aiFeedback && (

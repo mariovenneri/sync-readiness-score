@@ -124,12 +124,15 @@ const SearchInput = ({ onTrackSelected }) => {
     <div className="min-h-screen bg-white flex items-center justify-center px-4">
       <div className="w-full max-w-4xl">
         <div className="bg-gray-800 rounded-3xl shadow-2xl p-8">
-          <h1 className="text-6xl text-white font-bold text-center mb-1 tracking-tighter leading-tight">
+          <h1 className="text-6xl text-white font-bold text-center mb-1 leading-tight">
             Song Sync Score
           </h1>
-          <p className="text-blue-300 text-center mb-10 text-xl tracking-tight">
+          <p className="text-blue-300 text-center mb- text-2xl mb-3">
             Get Your Music into TV and Film
           </p>
+          <p className="block mx-auto text-white leading-relaxed text-center mb-10 wrap-break-word max-w-lg">
+          See how well your song fits TV, film, ads, and commercials — the higher the score, the higher your chances of placement.
+        </p>
 
           <div className="relative">
             <input
@@ -208,15 +211,8 @@ const SearchInput = ({ onTrackSelected }) => {
           </div>
         </div>
 
-      <div className="mt-5 px-4 text-center flex items-center justify-center gap-2">
-        <svg className="w-5 h-5 text-blue-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <p className="text-gray-400 text-sm leading-relaxed max-w-md text-left">
-          Sync readiness shows how well your song fits TV, film, ads, and trailers — a high score means more placement chances.
-        </p>
+      <div className="mt-3 px-4 text-center flex items-center justify-center gap-2">
       </div>
-        
         <a 
           href="https://musicatlas.ai"
           className="flex justify-center text-blue-400/60 text-sm mt-5 hover:text-blue-400/75 transition"
@@ -229,3 +225,5 @@ const SearchInput = ({ onTrackSelected }) => {
 };
 
 export default SearchInput;
+
+// See how well your song fits TV, film, ads, and commercials — a high score means more placement chances.
