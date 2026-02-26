@@ -55,7 +55,7 @@ function App() {
       // Track was rejected by MusicAtlas (not available for analysis)
       if (response.status === 404) {
         console.log("Track not available for analysis");
-        alert("This track isn't available for analysis yet. It may not be released or publicly available on streaming platforms.");
+        alert("This track isn't available for analysis yet. Please try a different track.");
         setCurrentScreen("input");
         return;
       }
