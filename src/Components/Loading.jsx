@@ -60,7 +60,7 @@ const Loading = ({ track, dataReady = false, onComplete }) => {
       // First fact shown after steps complete
       const timer = setTimeout(() => {
         setCurrentStep(prev => prev + 1);
-      }, 6000);
+      }, 4000);
       return () => clearTimeout(timer);
     } else if (currentStep < steps.length + shuffledFacts.length) {
       // Cycling through facts
@@ -69,10 +69,10 @@ const Loading = ({ track, dataReady = false, onComplete }) => {
         
         // Check if we should transition after this fact
         const currentFactIndex = currentStep + 1 - steps.length;
-        if (currentFactIndex >= 5 && dataReady) {
+        if (currentFactIndex >= 3 && dataReady) {
           onComplete();
         }
-      }, 6000);
+      }, 4000);
       return () => clearTimeout(timer);
     } else {
       // All facts shown once — mark as looped
