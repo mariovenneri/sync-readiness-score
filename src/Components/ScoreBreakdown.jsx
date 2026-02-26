@@ -323,7 +323,7 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-1 tracking-tight leading-tight">"{track.title}"</h2>
             <p className="text-blue-300 text-base sm:text-lg mb-2">by {track.artist}</p>
             {aiFeedback && (
-              <p className="text-xs sm:text-sm text-gray-400 italic">Analyzed by music supervisor AI</p>
+              <p className="text-xs sm:text-sm text-gray-400 italic">Analyzed by Music Supervisor AI</p>
             )}
 
             <div className="text-center mb-6 sm:mb-8 mt-4 sm:mt-6">
@@ -503,12 +503,12 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
               <p className="text-xs text-gray-400 mt-1">Per Placement</p>
             </div>
             <div className="text-center p-3 sm:p-4 bg-black/40 rounded-xl shadow-lg border border-blue-500/20 w-2/3 sm:w-full relative left-1/6 sm:left-0">
-              <h2 className="text-xl sm:text-2xl font-black text-blue-400">1000s</h2>
-              <p className="text-xs text-gray-400 mt-1">Active Supervisors</p>
+              <h2 className="text-xl sm:text-2xl font-black text-blue-400">No</h2>
+              <p className="text-xs text-gray-400 mt-1">Monthly Fees</p>
             </div>
             <div className="text-center p-3 sm:p-4 bg-black/40 rounded-xl shadow-lg border border-blue-500/20 w-2/3 sm:w-full relative left-1/6 sm:left-0">
-              <h2 className="text-xl sm:text-2xl font-black text-blue-400">24/7</h2>
-              <p className="text-xs text-gray-400 mt-1">Searchable Catalog</p>
+              <h2 className="text-xl sm:text-2xl font-black text-blue-400">0%</h2>
+              <p className="text-xs text-gray-400 mt-1">Commission Taken</p>
             </div>
           </div>
 
