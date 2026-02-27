@@ -121,20 +121,20 @@ const SearchInput = ({ onTrackSelected }) => {
   };
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-4">
+    <div className="min-h-screen bg-linear-to-tl from-gray-950 from-15% via-black via-50% to-gray-950 to-85% flex items-center justify-center px-4">
       <div className="w-full max-w-4xl">
-        <div className="bg-gray-800 rounded-3xl shadow-2xl p-8">
+        <div className="bg-gray-950 rounded-3xl shadow-2xl p-8 border-gray-900 border">
           <h1 className="text-6xl text-white font-bold text-center mb-1 leading-tight">
-            Song Sync Score
+            Sync<span className="bg-clip-text text-transparent bg-linear-to-r from-blue-300 to-violet-500">Check</span>
           </h1>
           <p className="text-blue-300 text-center mb- text-2xl mb-3">
             Get Your Music into TV and Film
           </p>
           <p className="block mx-auto text-white leading-relaxed text-center mb-10 wrap-break-word max-w-lg">
-          See how well your song fits TV, film, ads, and commercials — the higher the score, the higher your chances of placement.
+          See how well your song fits TV, film, ads, and commercials — the higher your SyncCheck, the higher your chances of placement.
         </p>
 
-          <div className="relative">
+          <div className="relative pb-10">
             <input
               ref={inputRef}
               type="text"
@@ -198,11 +198,11 @@ const SearchInput = ({ onTrackSelected }) => {
           </div>
         </div>
 
-      <div className="mt-3 px-4 text-center flex items-center justify-center gap-2">
+      <div className="px-4 text-center flex items-center justify-center gap-2">
       </div>
         <a 
           href="https://musicatlas.ai"
-          className="flex justify-center text-blue-400/60 text-sm mt-5 hover:text-blue-400/75 transition"
+          className="flex justify-center text-blue-400/60 text-sm mt-5 hover:text-blue-400/75 transition duration-300"
         >
           Powered by MusicAtlas.ai
         </a>
