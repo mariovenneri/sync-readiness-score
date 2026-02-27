@@ -499,18 +499,20 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div className="text-center p-3 sm:p-4 bg-black/40 rounded-xl shadow-lg border border-blue-500/20 w-2/3 sm:w-full relative left-1/6 sm:left-0">
-              <h2 className="text-xl sm:text-2xl font-black text-blue-400">$500-$150K</h2>
-              <p className="text-xs text-gray-400 mt-1">Per Placement</p>
-            </div>
-            <div className="text-center p-3 sm:p-4 bg-black/40 rounded-xl shadow-lg border border-blue-500/20 w-2/3 sm:w-full relative left-1/6 sm:left-0">
               <h2 className="text-xl sm:text-2xl font-black text-blue-400">No</h2>
               <p className="text-xs text-gray-400 mt-1">Monthly Fees</p>
+            </div>
+            <div className="text-center p-3 sm:p-4 bg-black/40 rounded-xl shadow-lg border border-blue-500/20 w-2/3 sm:w-full relative left-1/6 sm:left-0">
+              <h2 className="text-xl sm:text-2xl font-black text-blue-400">$500-$150K</h2>
+              <p className="text-xs text-gray-400 mt-1">Per Placement</p>
             </div>
             <div className="text-center p-3 sm:p-4 bg-black/40 rounded-xl shadow-lg border border-blue-500/20 w-2/3 sm:w-full relative left-1/6 sm:left-0">
               <h2 className="text-xl sm:text-2xl font-black text-blue-400">0%</h2>
               <p className="text-xs text-gray-400 mt-1">Commission Taken</p>
             </div>
           </div>
+
+          <p className="text-white font-lg text-center">Indie artists are getting their music placed everyday.</p>
 
           <div className="text-center mb-3 sm:mb-4">
             <a
