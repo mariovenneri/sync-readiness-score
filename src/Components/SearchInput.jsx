@@ -122,7 +122,8 @@ const SearchInput = ({ onTrackSelected }) => {
 
   return (
     <div className="min-h-screen bg-linear-to-tl from-gray-950 from-15% via-black via-50% to-gray-950 to-85% flex items-center justify-center px-4">
-      <div className="w-full max-w-4xl">
+
+      <div className="w-full max-w-4xl relative z-10">
         <div className="bg-gray-950 rounded-3xl shadow-2xl p-8 border-gray-900 border">
           <h1 className="text-6xl text-white font-bold text-center mb-1 leading-tight">
             Sync<span className="bg-clip-text text-transparent bg-linear-to-r from-blue-300 to-violet-500">Check</span>

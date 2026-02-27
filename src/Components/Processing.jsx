@@ -71,11 +71,21 @@ const Processing = ({ track, jobId, onBack, onComplete }) => {
   const displayPercent = Math.round(percentComplete ?? 0);
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-4xl">
-        <div className="bg-gray-800 rounded-3xl shadow-2xl overflow-hidden p-10 sm:p-14 text-center">
+    <div className="min-h-screen bg-linear-to-tl from-gray-950 from-15% via-black via-50% to-gray-950 to-85% flex items-center justify-center px-4 py-8">
+
+      {/* Animated gradient blobs */}
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <div className="absolute -inset-2.5 opacity-20">
+        <div className="absolute top-1/4 left-1/12 w-96 h-96 bg-green-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
+        <div className="absolute right-1/8 bottom-1/3 w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
+        <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-violet-400 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
+      </div>
+    </div>
+
+      <div className="w-full max-w-4xl relative z-10">
+        <div className="bg-gray-950 rounded-3xl shadow-2xl overflow-hidden p-10 sm:p-14 text-center border border-gray-900">
           
-          <div className="relative z-10">
+          <>
             {/* Icon */}
             <div className="flex justify-center mb-6">
               <span className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-yellow-500/20 text-yellow-400">
@@ -124,7 +134,7 @@ const Processing = ({ track, jobId, onBack, onComplete }) => {
             )}
 
             {/* Message */}
-            <div className="bg-white/10 border border-transparent rounded-xl p-6 mb-8">
+            <div className="bg-linear-to-tl from-white/10 to-gray-950 border border-transparent rounded-xl p-6 mb-8">
               {status === "error" ? (
                 <p className="text-red-300 text-base sm:text-lg leading-relaxed">
                   {errorMessage} Try searching another track or come back to this one later.
@@ -154,7 +164,7 @@ const Processing = ({ track, jobId, onBack, onComplete }) => {
             <p className="text-gray-500 text-xs mt-6 italic">
               Powered by MusicAtlas.ai
             </p>
-          </div>
+          </>
         </div>
       </div>
     </div>
