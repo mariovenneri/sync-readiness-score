@@ -96,11 +96,20 @@ const Loading = ({ track, dataReady = false, onComplete }) => {
     : null;
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-6 sm:p-12 relative overflow-hidden">
+    <div className="min-h-screen bg-linear-to-tl from-gray-950 from-15% via-black via-50% to-gray-950 to-85% flex items-center justify-center p-6 sm:p-12 relative overflow-hidden">
+
+      {/* Animated gradient blobs */}
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <div className="absolute -inset-2.5 opacity-20">
+        <div className="absolute top-1/4 left-1/12 w-96 h-96 bg-green-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
+        <div className="absolute right-1/8 bottom-1/3 w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
+        <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-violet-400 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
+      </div>
+    </div>
       
       {/* Track Info Card */}
       <div className="relative z-10 w-full max-w-2xl text-center">
-        <div className="bg-gray-800/95 backdrop-blur-xl rounded-3xl shadow-2xl p-8 sm:p-12 border border-blue-500/20">
+        <div className="bg-gray-950 backdrop-blur-xl rounded-3xl shadow-2xl p-8 sm:p-12 border-gray-800 border">
           
           {/* Album Art */}
           {track.artwork && (
@@ -148,18 +157,17 @@ const Loading = ({ track, dataReady = false, onComplete }) => {
           {/* "Did you know?" Fact - Only show if we have one and haven't looped */}
           {!hasLooped && currentFact && (
             <>
-              {/* Blue overlay layer at bottom - only when showing facts */}
               <div 
-                className="absolute inset-x-0 bottom-0 h-1/4 bg-blue-900/40 rounded-b-3xl -z-10"
+                className="absolute inset-x-0 bottom-0 h-1/3 bg-linear-to-t from-gray-900 rounded-b-3xl -z-10"
               />
               
-              <div className="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-blue-500/30 flex gap-3">
-              <span className="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-yellow-500/20 text-yellow-400 hover:text-yellow-300 hover:bg-amber-600/40 shrink-0">
+              <div className="mt-6 sm:mt-8 pt-7 border-t border-blue-500/30 flex gap-3">
+              <span className="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-yellow-500/20 text-yellow-400 hover:text-yellow-300 hover:bg-amber-600/40 shrink-0 transition duration-300">
                   <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                   </svg>
                 </span>
-                <p className="text-gray-300 text-sm sm:text-base leading-relaxed">
+                <p className="text-gray-300 text-sm sm:text-base leading-relaxed h-fit">
                   {currentFact}
                 </p>
               </div>
@@ -168,21 +176,12 @@ const Loading = ({ track, dataReady = false, onComplete }) => {
 
           {/* Persistent message after loop */}
           {hasLooped && (
-            <div className="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-blue-500/30">
+            <div className="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t border-green-500/30">
               <p className="text-gray-400 text-sm sm:text-base italic">
                 MusicAtlas is conducting comprehensive audio analysis. This ensures your score reflects real sync placement potential.
               </p>
             </div>
           )}
-        </div>
-      </div>
-
-      {/* Animated background gradient */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -inset-2.5 opacity-30">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
-          <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
-          <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
         </div>
       </div>
     </div>
