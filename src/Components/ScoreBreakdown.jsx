@@ -234,7 +234,8 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
         displayScore: displayScore(bpmScore),
         value: `${bpm} BPM`,
         explanation: bpmExplanation,
-        aiFeedbackKey: "bpmRange"
+        aiFeedbackKey: "bpmRange",
+        color: "#0EA5E9" // Blue
       },
       {
         category: "Key & Mode",
@@ -242,7 +243,8 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
         displayScore: displayScore(keyModeScore),
         value: `${music.key || "Unknown"} ${music.mode || ""}`.trim(),
         explanation: keyExplanation,
-        aiFeedbackKey: "keyMode"
+        aiFeedbackKey: "keyMode",
+        color: "#A855F7" // Purple
       },
       {
         category: "Vibe",
@@ -250,7 +252,8 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
         displayScore: displayScore(vibeScore),
         value: intensity.charAt(0).toUpperCase() + intensity.slice(1),
         explanation: vibeExplanation,
-        aiFeedbackKey: "vibe"
+        aiFeedbackKey: "vibe",
+        color: "#F59E0B" // Orange
       },
       {
         category: "Length",
@@ -258,7 +261,8 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
         displayScore: displayScore(lengthScore),
         value: `${Math.floor(durationMin)}:${durationSec.toString().padStart(2, '0')}`,
         explanation: lengthExplanation,
-        aiFeedbackKey: "length"
+        aiFeedbackKey: "length",
+        color: "#14B8A6" // teal
       }
     ];
 
@@ -304,171 +308,179 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-2 py-6 sm:py-8 relative overflow-hidden">
-      {/* Animated background gradient - matching Loading */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -inset-2.5 opacity-20">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
-          <div className="absolute top-1/3 right-1/4 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
-          <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
+return (
+  <main className="bg-black">
+    {/* Score Header Section */}
+    <section className="bg-linear-to-b from-black via-gray-900 to-gray-800 px-2 py-6 sm:py-8">
+      <div className="mx-2 md:mx-auto max-w-7xl">
+        <div className="bg-gray-900 rounded-2xl sm:rounded-3xl shadow-lg p-6 sm:p-10 border border-gray-800">
+          <p className="text-blue-300 text-sm sm:text-lg mb-1 font-semibold">SyncCheck for</p>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-1 tracking-tight leading-tight">"{track.title}"</h2>
+          <p className="text-blue-300 text-base sm:text-lg mb-1">by {track.artist}</p>
+          {aiFeedback && (
+            <p className="text-xs sm:text-sm text-gray-400 italic">Analyzed by Music Supervisor AI</p>
+          )}
+
+          <div className="text-center mt-10 sm:mt-6">
+            <div className="text-6xl sm:text-7xl lg:text-8xl font-black text-white">{finalScore}</div>
+            <div className="text-2xl sm:text-3xl font-bold text-blue-300">/ 100</div>
+            <p className="text-blue-200 text-lg sm:text-xl font-medium mt-3 sm:mt-4">
+              {finalScore >= 90 ? "Excellent" : finalScore >= 75 ? "Strong" : finalScore >= 60 ? "Good" : "Needs Work"}
+            </p>
+          </div>
         </div>
       </div>
+    </section>
 
-      <div className="relative z-10">
-      <div className="w-full max-w-5xl">
-        <div className="bg-gray-800/95 rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-10 mb-4 sm:mb-6 relative overflow-hidden">
-          <div className="relative z-10">
-            <p className="text-blue-300 text-sm sm:text-lg mb-1 font-semibold">Song Sync Score for</p>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-1 tracking-tight leading-tight">"{track.title}"</h2>
-            <p className="text-blue-300 text-base sm:text-lg mb-2">by {track.artist}</p>
-            {aiFeedback && (
-              <p className="text-xs sm:text-sm text-gray-400 italic">Analyzed by Music Supervisor AI</p>
-            )}
+    {/* Breakdown Cards Section */}
+    <section className="bg-linear-to-b from-gray-800 via-gray-100 to-white px-2 py-6 sm:py-8">
+      <div className="mx-2 md:mx-auto max-w-7xl">
+        {/* Mobile: Stacked */}
+        <div className="md:hidden grid grid-cols-1 gap-3 sm:gap-4">
+          {breakdowns.map((item, index) => {
+            const feedback = aiFeedback?.[item.aiFeedbackKey];
+            const isExpanded = expandedCard === index;
 
-            <div className="text-center mb-6 sm:mb-8 mt-4 sm:mt-6">
-              <div className="text-6xl sm:text-7xl lg:text-8xl font-black text-white">{finalScore}</div>
-              <div className="text-2xl sm:text-3xl font-bold text-blue-300">/ 100</div>
-              <p className="text-blue-200 text-lg sm:text-xl font-medium mt-3 sm:mt-4">
-                {finalScore >= 90 ? "Excellent" : finalScore >= 75 ? "Strong" : finalScore >= 60 ? "Good" : "Needs Work"}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="mb-4 sm:mb-6">
-          <div className="md:hidden grid grid-cols-1 gap-3 sm:gap-4">
-            {breakdowns.map((item, index) => {
-              const feedback = aiFeedback?.[item.aiFeedbackKey];
-              const isExpanded = expandedCard === index;
-
-              return (
-                <div key={index} className="bg-gray-800/95 backdrop-blur-xl rounded-xl sm:rounded-2xl shadow-xl border border-blue-700/30 overflow-hidden hover:border-blue-500/50 transition-all">
-                  <div className="p-4 sm:p-6">
-                    <div className="flex justify-between items-start mb-3 sm:mb-4">
-                      <div>
-                        <h3 className="text-base sm:text-lg font-semibold text-white">{item.category}</h3>
-                        <p className="text-blue-400 text-xs sm:text-sm font-medium">{item.value}</p>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-2xl sm:text-3xl font-black text-white">{item.displayScore}</div>
-                        <div className="text-xs sm:text-sm text-blue-300">/100</div>
-                      </div>
+            return (
+              <div key={index} 
+              className="backdrop-blur-xl border rounded-xl sm:rounded-2xl shadow-xl hover:translate-x-0.5 duration-300 transition-colors"
+              style={{
+                backgroundColor: `${item.color}25`,
+                borderColor: `${item.color}80`
+              }}>
+                <div className="p-4 sm:p-6">
+                  <div className="flex justify-between items-start mb-3 sm:mb-4">
+                    <div>
+                      <h3 className="text-base sm:text-lg font-semibold text-gray-900">{item.category}</h3>
+                      <p className="text-gray-800 text-xs sm:text-sm font-medium">{item.value}</p>
                     </div>
-
-                    <div className="w-full h-2 bg-gray-700/50 rounded-full overflow-hidden mb-3">
-                      <div
-                        className="h-full bg-blue-500 transition-all duration-500"
-                        style={{ width: `${item.displayScore}%` }}
-                      />
+                    <div className="text-right">
+                      <div className="text-2xl sm:text-3xl font-black text-gray-900">{item.displayScore}</div>
+                      <div className="text-xs sm:text-sm text-gray-700">/100</div>
                     </div>
-
-                    {feedback ? (
-                      <div>
-                        <p className="text-gray-300 text-xs sm:text-sm font-medium mb-2">{feedback.short}</p>
-                        {isExpanded && (
-                          <div className="mt-3 sm:mt-4 space-y-2 sm:space-y-3 animate-fadeIn">
-                            <div className="bg-blue-900/30 rounded-lg p-3 sm:p-4 border border-blue-500/20">
-                              <p className="text-xs font-semibold text-blue-400 mb-1">Scene Perspective:</p>
-                              <p className="text-xs sm:text-sm text-gray-300">{feedback.why}</p>
-                            </div>
-                            <div className="bg-green-900/30 rounded-lg p-3 sm:p-4 border border-green-500/20">
-                              <p className="text-xs font-semibold text-green-400 mb-1">Production Notes:</p>
-                              <p className="text-xs sm:text-sm text-gray-300">{feedback.improve}</p>
-                            </div>
-                          </div>
-                        )}
-                        <button
-                          onClick={() => setExpandedCard(isExpanded ? null : index)}
-                          className="mt-2 sm:mt-3 text-blue-400 hover:text-blue-300 text-xs sm:text-sm font-medium flex items-center gap-1 transition"
-                        >
-                          {isExpanded ? (
-                            <>Show less <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg></>
-                          ) : (
-                            <>Learn more <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></>
-                          )}
-                        </button>
-                      </div>
-                    ) : (
-                      <div>
-                        <p className="text-gray-400 text-xs sm:text-sm">{item.explanation}</p>
-                        {!aiFeedback && <p className="text-gray-500 text-xs mt-2 italic">Loading AI insights...</p>}
-                      </div>
-                    )}
                   </div>
-                </div>
-              );
-            })}
-          </div>
 
-          <div className="hidden md:block overflow-x-scroll snap-x snap-mandatory scrollbar-hide">
-            <div className="flex gap-4 pb-2">
-              {breakdowns.map((item, index) => {
-                const feedback = aiFeedback?.[item.aiFeedbackKey];
-                const isExpanded = expandedCard === index;
+                  <div className="w-full h-2 bg-gray-700/50 rounded-full overflow-hidden mb-3">
+                    <div
+                      className="h-full bg-blue-500 transition-all duration-500"
+                      style={{ width: `${item.displayScore}%`}}
+                    />
+                  </div>
 
-                return (
-                  <div key={index} className="snap-center shrink-0 w-[45%] bg-gray-800/95 backdrop-blur-xl rounded-2xl shadow-sm border border-blue-700/30 overflow-hidden hover:border-blue-500/50 transition-all">
-                    <div className="p-6">
-                      <div className="flex justify-between items-start mb-20">
-                        <div>
-                          <h3 className="text-2xl font-semibold text-white">{item.category}</h3>
-                          <p className="text-blue-400 text-xs sm:text-sm font-medium">{item.value}</p>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-2xl sm:text-3xl font-black text-white">{item.displayScore}</div>
-                          <div className="text-xs sm:text-sm text-blue-300">/100</div>
-                        </div>
-                      </div>
-
-                      <div className="w-full h-2 bg-gray-700/50 rounded-full overflow-hidden mb-3">
-                        <div
-                          className="h-full bg-blue-500 transition-all duration-500"
-                          style={{ width: `${item.displayScore}%` }}
-                        />
-                      </div>
-
-                      {feedback ? (
-                        <div>
-                          <p className="text-gray-300 text-xs sm:text-sm font-medium mb-2">{feedback.short}</p>
-                          {isExpanded && (
-                            <div className="mt-3 sm:mt-4 space-y-2 sm:space-y-3 animate-fadeIn">
-                              <div className="bg-blue-900/30 rounded-lg p-3 sm:p-4 border border-blue-500/20">
-                                <p className="text-xs font-semibold text-blue-400 mb-1">Scene Perspective:</p>
-                                <p className="text-xs sm:text-sm text-gray-300">{feedback.why}</p>
-                              </div>
-                              <div className="bg-green-900/30 rounded-lg p-3 sm:p-4 border border-green-500/20">
-                                <p className="text-xs font-semibold text-green-400 mb-1">Production Notes:</p>
-                                <p className="text-xs sm:text-sm text-gray-300">{feedback.improve}</p>
-                              </div>
-                            </div>
-                          )}
-                          <button
-                            onClick={() => setExpandedCard(isExpanded ? null : index)}
-                            className="mt-2 sm:mt-3 text-blue-400 hover:text-blue-300 text-xs sm:text-sm font-medium flex items-center gap-1 transition"
-                          >
-                            {isExpanded ? (
-                              <>Show less <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg></>
-                            ) : (
-                              <>Learn more <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></>
-                            )}
-                          </button>
-                        </div>
-                      ) : (
-                        <div>
-                          <p className="text-gray-400 text-xs sm:text-sm">{item.explanation}</p>
-                          {!aiFeedback && <p className="text-gray-500 text-xs mt-2 italic">Loading AI insights...</p>}
+                  {feedback ? (
+                    <div>
+                      <p className="text-gray-800 text-xs sm:text-sm font-medium mb-2">{feedback.short}</p>
+                      {isExpanded && (
+                        <div className="mt-3 sm:mt-4 space-y-2 sm:space-y-3 animate-fadeIn">
+                          <div className="bg-blue-900/65 rounded-lg p-3 sm:p-4 border border-blue-500/20">
+                            <p className="text-xs font-semibold text-blue-400 mb-1">Scene Perspective:</p>
+                            <p className="text-xs sm:text-sm text-gray-300">{feedback.why}</p>
+                          </div>
+                          <div className="bg-green-900/65 rounded-lg p-3 sm:p-4 border border-green-500/20">
+                            <p className="text-xs font-semibold text-green-400 mb-1">Production Notes:</p>
+                            <p className="text-xs sm:text-sm text-gray-300">{feedback.improve}</p>
+                          </div>
                         </div>
                       )}
+                      <button
+                        onClick={() => setExpandedCard(isExpanded ? null : index)}
+                        className="mt-2 sm:mt-3 text-blue-800 hover:text-blue-900 text-xs sm:text-sm font-medium flex items-center gap-1 transition"
+                      >
+                        {isExpanded ? (
+                          <>Show less <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg></>
+                        ) : (
+                          <>Learn more <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></>
+                        )}
+                      </button>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+                  ) : (
+                    <div>
+                      <p className="text-gray-400 text-xs sm:text-sm">{item.explanation}</p>
+                      {!aiFeedback && <p className="text-gray-500 text-xs mt-2 italic">Loading AI insights...</p>}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
 
-        <div className="bg-gray-800/95 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 mb-4 sm:mb-6 border border-blue-500/30">
+        {/* Desktop: 2x2 Grid */}
+        <div className="hidden md:grid md:grid-cols-2 gap-4">
+          {breakdowns.map((item, index) => {
+            const feedback = aiFeedback?.[item.aiFeedbackKey];
+            const isExpanded = expandedCard === index;
+
+            return (
+              <div key={index} 
+              className="backdrop-blur-xl rounded-2xl shadow-xl hover:translate-0.5 duration-300 transition-colors"
+              style={{
+                backgroundColor: `${item.color}85`,
+                borderColor: `${item.color}50`
+              }}>
+                <div className="p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900">{item.category}</h3>
+                      <p className="text-gray-800 text-sm font-medium">{item.value}</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-3xl font-black text-gray-900">{item.displayScore}</div>
+                      <div className="text-sm text-gray-700">/100</div>
+                    </div>
+                  </div>
+
+                  <div className="w-full h-2 bg-gray-700/50 rounded-full overflow-hidden mb-3">
+                    <div
+                      className="h-full bg-blue-500 transition-all duration-500"
+                      style={{ width: `${item.displayScore}%` }}
+                    />
+                  </div>
+
+                  {feedback ? (
+                    <div>
+                      <p className="text-gray-800 text-sm font-medium mb-2">{feedback.short}</p>
+                      {isExpanded && (
+                        <div className="mt-4 space-y-3 animate-fadeIn">
+                          <div className="bg-blue-900/65 rounded-lg p-4 border border-blue-500/20">
+                            <p className="text-xs font-semibold text-blue-400 mb-1">Scene Perspective:</p>
+                            <p className="text-sm text-gray-300">{feedback.why}</p>
+                          </div>
+                          <div className="bg-green-900/65 rounded-lg p-4 border border-green-500/20">
+                            <p className="text-xs font-semibold text-green-400 mb-1">Production Notes:</p>
+                            <p className="text-sm text-gray-300">{feedback.improve}</p>
+                          </div>
+                        </div>
+                      )}
+                      <button
+                        onClick={() => setExpandedCard(isExpanded ? null : index)}
+                        className="mt-3 text-blue-800 hover:text-blue-900 text-sm font-medium flex items-center gap-1 transition"
+                      >
+                        {isExpanded ? (
+                          <>Show less <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg></>
+                        ) : (
+                          <>Learn more <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></>
+                        )}
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-gray-400 text-sm">{item.explanation}</p>
+                      {!aiFeedback && <p className="text-gray-500 text-xs mt-2 italic">Loading AI insights...</p>}
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+
+    {/* CTA Section */}
+    <section className="bg-black px-2 py-6 sm:py-8">
+      <div className="mx-2 md:mx-auto max-w-5xl">
+        <div className="bg-gray-900 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 border border-gray-800">
           <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 sm:mb-4">
             How to Generate More Revenue from Your Songs?
           </h3>
@@ -497,7 +509,7 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
             <div className="grow border-t border-blue-400/30"></div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-1 md:gap-3 lg:gap-5 mb-4 sm:mb-6">
             <div className="text-center p-3 sm:p-4 bg-black/40 rounded-xl shadow-lg border border-blue-500/20 w-2/3 sm:w-full relative left-1/6 sm:left-0">
               <h2 className="text-xl sm:text-2xl font-black text-blue-400">No</h2>
               <p className="text-xs text-gray-400 mt-1">Monthly Fees</p>
@@ -512,9 +524,13 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
             </div>
           </div>
 
-          <p className="text-white font-lg text-center">Indie artists are getting their music placed everyday.</p>
 
           <div className="text-center mb-3 sm:mb-4">
+            {/* <p className="text-gray-200 text-base sm:text-lg leading-relaxed text-center mb-4">
+              Indie artists are getting their music placed every day.
+            </p> */}
+
+          {/* CTA Button */}
             <a
               href="https://musicatlas.ai/syncrep/"
               target="_blank"
@@ -523,6 +539,12 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
             >
               Get in Front of Music Supervisors → Join SyncRep
             </a>
+          </div>
+
+          <div className="text-center mb-4 sm:mb-5">
+            <p className="text-sm sm:text-base text-gray-400">
+              Use code <span className="font-mono font-bold text-blue-400 bg-blue-950/50 px-2 py-1 rounded">SYNCCHECK</span> for $5 off
+            </p>
           </div>
 
           <div className="text-center">
@@ -534,11 +556,10 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
             </button>
           </div>
         </div>
-
       </div>
-      </div>
-    </div>
-  );
+    </section>
+  </main>
+);
 };
 
 export default ScoreBreakdown;

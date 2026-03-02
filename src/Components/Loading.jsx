@@ -101,9 +101,9 @@ const Loading = ({ track, dataReady = false, onComplete }) => {
       {/* Animated gradient blobs */}
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
       <div className="absolute -inset-2.5 opacity-20">
-        <div className="absolute top-1/4 left-1/12 w-96 h-96 bg-green-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
-        <div className="absolute right-1/8 bottom-1/3 w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
-        <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-violet-400 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
+        <div className="absolute top-1/4 left-1/6 w-96 h-96 bg-green-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
+        <div className="absolute right-1/5 bottom-1/3 w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
+        <div className="absolute bottom-1/5 left-1/4 w-96 h-96 bg-violet-400 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
       </div>
     </div>
       

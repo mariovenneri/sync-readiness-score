@@ -125,10 +125,10 @@ const SearchInput = ({ onTrackSelected }) => {
 
       <div className="w-full max-w-4xl relative z-10">
         <div className="bg-gray-950 rounded-3xl shadow-2xl p-8 border-gray-900 border">
-          <h1 className="text-6xl text-white font-bold text-center mb-1 leading-tight">
+          <h1 className="text-6xl lg:text-7xl text-white text-center font-bold mb-2 leading-tight">
             Sync<span className="bg-clip-text text-transparent bg-linear-to-r from-blue-300 to-violet-500">Check</span>
           </h1>
-          <p className="text-blue-300 text-center mb- text-2xl mb-3">
+          <p className="text-blue-300 text-center text-xl md:text-2xl mb-3">
             Get Your Music into TV and Film
           </p>
           <p className="block mx-auto text-white leading-relaxed text-center mb-10 wrap-break-word max-w-lg">
