@@ -125,10 +125,10 @@ const SearchInput = ({ onTrackSelected }) => {
       <div className="min-h-screen flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-4xl relative z-10">
           <div className="bg-gray-950 rounded-3xl shadow-2xl p-8 border-gray-900 border">
-            <div className="relative top-5 mb-1">
+            <div className="relative top-5 md:mb-1 mb-4">
 
               {/* logo and title */}
-              <svg width="450" height="120" viewBox="0 0 300 80" className="mx-auto" xmlns="http://www.w3.org/2000/svg">
+              <svg width="450" height="120" viewBox="0 0 300 80" className="mx-auto w-full max-w-[280px] sm:max-w-[350px] md:max-w-[450px] h-auto" xmlns="http://www.w3.org/2000/svg">
                 <defs>
                   <linearGradient id="f2" x1="0%" x2="100%">
                     <stop offset="0%" stop-color="#93C5FD"/>
