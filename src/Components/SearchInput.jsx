@@ -212,7 +212,7 @@ const SearchInput = ({ onTrackSelected }) => {
               
               {/* Invisible spacer that creates room when dropdown is open */}
                 {(loading || results.length > 0) && (
-                  <div className="h-96" aria-hidden="true"></div>
+                  <div className="mb-10" aria-hidden="true"></div>
                 )}
               
             </div>
