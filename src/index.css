@@ -10,3 +10,7 @@
   display: none;  /* Chrome, Safari, Opera */
 }
 
+body, html {
+  background-color: #000000;
+  min-height: 100%;
+}
