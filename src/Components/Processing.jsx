@@ -158,7 +158,7 @@ const Processing = ({ track, jobId, onBack, onComplete }) => {
             {status !== "done" && (
               <button
                 onClick={onBack}
-                className="inline-block bg-blue-600 hover:bg-blue-500 hover:scale-105 text-white font-bold py-3 px-8 sm:py-4 sm:px-10 rounded-full text-base sm:text-lg shadow-2xl transition-all duration-300"
+                className="inline-block bg-blue-600 hover:bg-blue-500 hover:scale-105 text-white font-bold py-3 px-8 sm:py-4 sm:px-10 rounded-full text-base sm:text-lg shadow-2xl transition-all duration-300 hover:cursor-pointer"
               >
                 ← Search Another Track<span className="text-blue-200 text-sm ml-2">(analysis continues)</span>
               </button>
