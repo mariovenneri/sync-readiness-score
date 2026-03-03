@@ -577,7 +577,7 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
               </p>
               
               <a
-                href="https://musicatlas.ai/syncrep/"
+                href="https://musicatlas.ai/syncrep?utm_source=synccheck&utm_medium=partner&utm_campaign=syncrep"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block bg-blue-600 hover:bg-blue-500 hover:scale-105 text-white font-bold py-4 px-10 rounded-full text-base sm:text-lg shadow-2xl transition-all duration-300"
