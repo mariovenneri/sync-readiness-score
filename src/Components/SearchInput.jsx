@@ -150,7 +150,7 @@ const SearchInput = ({ onTrackSelected }) => {
             See how well your song fits TV, film, ads, and commercials — the higher your SyncCheck, the higher your chances of placement.
           </p>
 
-            <div className="relative pb-10">
+            <div className="relative pb-10 mb-8">
               <input
                 ref={inputRef}
                 type="text"
@@ -180,7 +180,7 @@ const SearchInput = ({ onTrackSelected }) => {
 
               {/* Dropdown */}
               {(loading || results.length > 0) && (
-                <div className="absolute left-0 right-0 top-full my-2 bg-black/90 backdrop-blur-2xl rounded-2xl border border-blue-700/50 shadow-2xl overflow-hidden z-50">
+                <div className="absolute left-0 right-0 top-full mt-2 bg-black/90 backdrop-blur-2xl rounded-2xl border border-blue-700/50 shadow-2xl overflow-hidden z-50">
                   {loading && (
                     <div className="p-6 text-blue-400 text-center">
                       <div className="inline-block w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
