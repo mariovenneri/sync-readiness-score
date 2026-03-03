@@ -7,6 +7,7 @@ import Processing from "./Components/Processing";
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState("input");
+  const [errorMessage, setErrorMessage] = useState(null)
   const [selectedTrack, setSelectedTrack] = useState(null);
   const [musicAtlasRaw, setMusicAtlasRaw] = useState(null);
   const [aiFeedback, setAiFeedback] = useState(null);
@@ -55,7 +56,7 @@ function App() {
       // Track was rejected by MusicAtlas (not available for analysis)
       if (response.status === 404) {
         console.log("Track not available for analysis");
-        alert("This track isn't available for analysis yet. Please try a different track.");
+        setErrorMessage("This track isn't available for analysis yet. Please try a different track.")
         setCurrentScreen("input");
         return;
       }
@@ -148,6 +149,30 @@ function App() {
 
   return (
     <div className="min-h-screen">
+      
+      {/* Error Modal */}
+      {errorMessage && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+          <div className="bg-gray-900 rounded-2xl p-8 max-w-md w-full border border-red-500/30 shadow-2xl">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
+                <svg className="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-white">Track Unavailable</h3>
+            </div>
+            <p className="text-gray-300 mb-6">{errorMessage}</p>
+            <button
+              onClick={() => setErrorMessage(null)}
+              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-6 rounded-full transition-all duration-300"
+            >
+              Try Another Track
+            </button>
+          </div>
+        </div>
+      )}
+
       {currentScreen === "input" && (
         <SearchInput onTrackSelected={handleTrackSelected} />
       )}
