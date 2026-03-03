@@ -98,14 +98,34 @@ const Loading = ({ track, dataReady = false, onComplete }) => {
   return (
     <div className="min-h-screen bg-linear-to-tl from-gray-950 from-15% via-black via-50% to-gray-950 to-85% flex items-center justify-center p-6 sm:p-12 relative overflow-hidden">
 
-      {/* Animated gradient blobs */}
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      <div className="absolute -inset-2.5 opacity-20">
-        <div className="absolute top-1/4 left-1/6 w-96 h-96 bg-green-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob"></div>
-        <div className="absolute right-1/5 bottom-1/3 w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"></div>
-        <div className="absolute bottom-1/5 left-1/4 w-96 h-96 bg-violet-400 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"></div>
+  {/* Small SyncCheck logo - top left corner */}
+    <div className="absolute top-6 left-6 z-20">
+      <svg width="120" height="32" viewBox="0 0 300 80" className="opacity-70">
+        <defs>
+          <linearGradient id="f2" x1="0%" x2="100%">
+            <stop offset="0%" stop-color="#93C5FD"/> <stop offset="100%" stop-color="#8B5CF6"/>
+          </linearGradient>
+        </defs>
+              
+            <circle cx="30" cy="40" r="24" fill="none" stroke="url(#f2)" stroke-width="2.5" opacity="0.2"/>
+            <path d="M 12 40 L 18 40 L 21 30 L 24 50 L 27 33 L 30 47 L 33 37 L 38 43 L 40 40 L 48 30 L 56 20" stroke="url(#f2)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+            <text x="65" y="52" font-family="Arial" font-size="42" font-weight="700" fill="#FFFFFF">Sync</text>
+            <text x="165" y="52" font-family="Arial" font-size="42" font-weight="700" fill="url(#f2)">Check</text>
+        </svg>
       </div>
-    </div>
+
+    {/* Animated gradient blobs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -inset-2.5 opacity-20">
+          <div className="absolute w-96 h-96 bg-green-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob"
+            style={{ top: '25%', left: '25%' }}></div>
+          <div className="absolute w-96 h-96 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"
+            style={{ left: '50%', bottom: '33%' }}></div>
+          <div className="absolute w-96 h-96 bg-violet-400 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"
+            style={{ bottom: '10%', left: '25%' }}></div>
+        </div>
+      </div>
       
       {/* Track Info Card */}
       <div className="relative z-10 w-full max-w-2xl text-center">

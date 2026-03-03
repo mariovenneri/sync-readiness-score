@@ -308,258 +308,303 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
     );
   }
 
-return (
-  <main className="bg-black">
-    {/* Score Header Section */}
-    <section className="bg-linear-to-b from-black via-gray-900 to-gray-800 px-2 py-6 sm:py-8">
-      <div className="mx-2 md:mx-auto max-w-7xl">
-        <div className="bg-gray-900 rounded-2xl sm:rounded-3xl shadow-lg p-6 sm:p-10 border border-gray-800">
-          <p className="text-blue-300 text-sm sm:text-lg mb-1 font-semibold">SyncCheck for</p>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-1 tracking-tight leading-tight">"{track.title}"</h2>
-          <p className="text-blue-300 text-base sm:text-lg mb-1">by {track.artist}</p>
-          {aiFeedback && (
-            <p className="text-xs sm:text-sm text-gray-400 italic">Analyzed by Music Supervisor AI</p>
-          )}
+  return (
+    <main className="min-h-screen bg-linear-to-tl from-gray-950 from-15% via-black via-50% to-gray-950 to-85% relative overflow-hidden">
+      
+      {/* Animated Blobs */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -inset-2.5 opacity-25">
+          {/* Green cluster - top right */}
+          <div className="absolute w-96 h-96 bg-green-600 rounded-full mix-blend-multiply filter blur-3xl animate-blob"
+            style={{ top: '-13%', right: '12%' }}></div>
 
-          <div className="text-center mt-10 sm:mt-6">
-            <div className="text-6xl sm:text-7xl lg:text-8xl font-black text-white">{finalScore}</div>
-            <div className="text-2xl sm:text-3xl font-bold text-blue-300">/ 100</div>
-            <p className="text-blue-200 text-lg sm:text-xl font-medium mt-3 sm:mt-4">
-              {finalScore >= 90 ? "Excellent" : finalScore >= 75 ? "Strong" : finalScore >= 60 ? "Good" : "Needs Work"}
-            </p>
-          </div>
+          {/* Blue cluster - top left */}
+          <div className="absolute w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl animate-blob"
+            style={{ top: '10%', left: '5%' }}></div>
+          <div className="absolute w-72 h-72 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-1000"
+            style={{ top: '20%', left: '0%' }}></div>
+
+          {/* Purple cluster - top/mid right */}
+          <div className="absolute w-96 h-96 bg-purple-600 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-2000"
+            style={{ top: '23%', right: '13%' }}></div>
+          <div className="absolute w-80 h-80 bg-violet-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-3000"
+            style={{ top: '50%', right: '10%' }}></div>
+
+          {/* Orange/Teal cluster - bottom */}
+          <div className="absolute w-96 h-96 bg-orange-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-4000"
+            style={{ bottom: '25%', left: '33%' }}></div>
+          <div className="absolute w-80 h-80 bg-teal-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-5000"
+            style={{ bottom: '10%', right: '0%' }}></div>
+
+          {/* Accent blobs - scattered */}
+          <div className="absolute w-64 h-64 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl animate-blob animation-delay-6000"
+            style={{ bottom: '20%', left: '0%', transform: 'translate(-50%, -50%)' }}></div>
         </div>
       </div>
-    </section>
 
-    {/* Breakdown Cards Section */}
-    <section className="bg-linear-to-b from-gray-800 via-gray-100 to-white px-2 py-6 sm:py-8">
-      <div className="mx-2 md:mx-auto max-w-7xl">
-        {/* Mobile: Stacked */}
-        <div className="md:hidden grid grid-cols-1 gap-3 sm:gap-4">
-          {breakdowns.map((item, index) => {
-            const feedback = aiFeedback?.[item.aiFeedbackKey];
-            const isExpanded = expandedCard === index;
-
-            return (
-              <div key={index} 
-              className="backdrop-blur-xl border rounded-xl sm:rounded-2xl shadow-xl hover:translate-x-0.5 duration-300 transition-colors"
-              style={{
-                backgroundColor: `${item.color}25`,
-                borderColor: `${item.color}80`
-              }}>
-                <div className="p-4 sm:p-6">
-                  <div className="flex justify-between items-start mb-3 sm:mb-4">
-                    <div>
-                      <h3 className="text-base sm:text-lg font-semibold text-gray-900">{item.category}</h3>
-                      <p className="text-gray-800 text-xs sm:text-sm font-medium">{item.value}</p>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-2xl sm:text-3xl font-black text-gray-900">{item.displayScore}</div>
-                      <div className="text-xs sm:text-sm text-gray-700">/100</div>
-                    </div>
-                  </div>
-
-                  <div className="w-full h-2 bg-gray-700/50 rounded-full overflow-hidden mb-3">
-                    <div
-                      className="h-full bg-blue-500 transition-all duration-500"
-                      style={{ width: `${item.displayScore}%`}}
-                    />
-                  </div>
-
-                  {feedback ? (
-                    <div>
-                      <p className="text-gray-800 text-xs sm:text-sm font-medium mb-2">{feedback.short}</p>
-                      {isExpanded && (
-                        <div className="mt-3 sm:mt-4 space-y-2 sm:space-y-3 animate-fadeIn">
-                          <div className="bg-blue-900/65 rounded-lg p-3 sm:p-4 border border-blue-500/20">
-                            <p className="text-xs font-semibold text-blue-400 mb-1">Scene Perspective:</p>
-                            <p className="text-xs sm:text-sm text-gray-300">{feedback.why}</p>
-                          </div>
-                          <div className="bg-green-900/65 rounded-lg p-3 sm:p-4 border border-green-500/20">
-                            <p className="text-xs font-semibold text-green-400 mb-1">Production Notes:</p>
-                            <p className="text-xs sm:text-sm text-gray-300">{feedback.improve}</p>
-                          </div>
-                        </div>
-                      )}
-                      <button
-                        onClick={() => setExpandedCard(isExpanded ? null : index)}
-                        className="mt-2 sm:mt-3 text-blue-800 hover:text-blue-900 text-xs sm:text-sm font-medium flex items-center gap-1 transition"
-                      >
-                        {isExpanded ? (
-                          <>Show less <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg></>
-                        ) : (
-                          <>Learn more <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></>
-                        )}
-                      </button>
-                    </div>
-                  ) : (
-                    <div>
-                      <p className="text-gray-400 text-xs sm:text-sm">{item.explanation}</p>
-                      {!aiFeedback && <p className="text-gray-500 text-xs mt-2 italic">Loading AI insights...</p>}
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Desktop: 2x2 Grid */}
-        <div className="hidden md:grid md:grid-cols-2 gap-4">
-          {breakdowns.map((item, index) => {
-            const feedback = aiFeedback?.[item.aiFeedbackKey];
-            const isExpanded = expandedCard === index;
-
-            return (
-              <div key={index} 
-              className="backdrop-blur-xl rounded-2xl shadow-xl hover:translate-0.5 duration-300 transition-colors"
-              style={{
-                backgroundColor: `${item.color}85`,
-                borderColor: `${item.color}50`
-              }}>
-                <div className="p-6">
-                  <div className="flex justify-between items-start mb-4">
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-900">{item.category}</h3>
-                      <p className="text-gray-800 text-sm font-medium">{item.value}</p>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-3xl font-black text-gray-900">{item.displayScore}</div>
-                      <div className="text-sm text-gray-700">/100</div>
-                    </div>
-                  </div>
-
-                  <div className="w-full h-2 bg-gray-700/50 rounded-full overflow-hidden mb-3">
-                    <div
-                      className="h-full bg-blue-500 transition-all duration-500"
-                      style={{ width: `${item.displayScore}%` }}
-                    />
-                  </div>
-
-                  {feedback ? (
-                    <div>
-                      <p className="text-gray-800 text-sm font-medium mb-2">{feedback.short}</p>
-                      {isExpanded && (
-                        <div className="mt-4 space-y-3 animate-fadeIn">
-                          <div className="bg-blue-900/65 rounded-lg p-4 border border-blue-500/20">
-                            <p className="text-xs font-semibold text-blue-400 mb-1">Scene Perspective:</p>
-                            <p className="text-sm text-gray-300">{feedback.why}</p>
-                          </div>
-                          <div className="bg-green-900/65 rounded-lg p-4 border border-green-500/20">
-                            <p className="text-xs font-semibold text-green-400 mb-1">Production Notes:</p>
-                            <p className="text-sm text-gray-300">{feedback.improve}</p>
-                          </div>
-                        </div>
-                      )}
-                      <button
-                        onClick={() => setExpandedCard(isExpanded ? null : index)}
-                        className="mt-3 text-blue-800 hover:text-blue-900 text-sm font-medium flex items-center gap-1 transition"
-                      >
-                        {isExpanded ? (
-                          <>Show less <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg></>
-                        ) : (
-                          <>Learn more <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></>
-                        )}
-                      </button>
-                    </div>
-                  ) : (
-                    <div>
-                      <p className="text-gray-400 text-sm">{item.explanation}</p>
-                      {!aiFeedback && <p className="text-gray-500 text-xs mt-2 italic">Loading AI insights...</p>}
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    </section>
-
-    {/* CTA Section */}
-    <section className="bg-black px-2 py-6 sm:py-8">
-      <div className="mx-2 md:mx-auto max-w-5xl">
-        <div className="bg-gray-900 backdrop-blur-xl rounded-2xl sm:rounded-3xl shadow-2xl p-6 sm:p-8 border border-gray-800">
-          <h3 className="text-xl sm:text-2xl font-bold text-white mb-3 sm:mb-4">
-            How to Generate More Revenue from Your Songs?
-          </h3>
-
-          <div className="prose prose-blue max-w-none mb-4 sm:mb-6">
-            {shouldShowGenrePopularity && (
-              <p className="text-blue-200 text-sm sm:text-base leading-relaxed mb-3 pb-3 border-b border-blue-500/20">
-                {primaryGenre && popularity !== null ? (
-                  <>Your track is a <strong className="text-white">{primaryGenre}</strong> song with a Spotify popularity score of <strong className="text-blue-300">{popularity}/100</strong> — a <strong className="text-white">{popularityLabel}</strong> track in a genre that supervisors are actively searching for.</>
-                ) : primaryGenre ? (
-                  <>Your track sits in the <strong className="text-white">{primaryGenre}</strong> space — a genre that sync supervisors are actively searching for.</>
-                ) : (
-                  <>Your track has a Spotify popularity score of <strong className="text-blue-300">{popularity}/100</strong>, marking it as a <strong className="text-white">{popularityLabel}</strong> track with real sync potential.</>
-                )}
-              </p>
+      {/* Score Header Section */}
+      <section className="relative z-10 px-4 sm:px-6 py-8 sm:py-12">
+        <div className="max-w-5xl mx-auto">
+          <div className="bg-transparent rounded-3xl shadow-2xl p-8 sm:p-12 border border-gray-800">
+            <p className="text-blue-300 text-sm sm:text-lg mb-1 font-semibold">SyncCheck for</p>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-1 tracking-tight leading-tight">
+              "{track.title}"
+            </h2>
+            <p className="text-blue-300 text-base sm:text-lg mb-1">by {track.artist}</p>
+            {aiFeedback && (
+              <p className="text-xs sm:text-sm text-gray-400 italic">Analyzed by Music Supervisor AI</p>
             )}
 
-            <p className="text-gray-200 text-base sm:text-lg leading-relaxed">
-              <strong className="text-white">Sync licensing</strong> is how your music gets placed in TV shows, films, commercials, trailers, and video games—earning you upfront fees ranging from <strong className="text-blue-300">$500 for indie productions to $150,000+ for major campaigns</strong>. Unlike streaming pennies, a single sync placement can generate serious income while exposing your music to millions of viewers. <strong className="text-white">SyncRep</strong> puts your tracks directly in front of music supervisors through a searchable platform built specifically for sync discovery, positioning you where the money is: in the catalogs supervisors browse every single day.
-            </p>
-          </div>
-
-          <div className="my-4 sm:my-6 flex items-center">
-            <div className="grow border-t border-blue-400/30"></div>
-            <span className="px-3 sm:px-4 text-blue-300 font-semibold text-xs sm:text-sm whitespace-nowrap">READY TO GET DISCOVERED?</span>
-            <div className="grow border-t border-blue-400/30"></div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-1 md:gap-3 lg:gap-5 mb-4 sm:mb-6">
-            <div className="text-center p-3 sm:p-4 bg-black/40 rounded-xl shadow-lg border border-blue-500/20 w-2/3 sm:w-full relative left-1/6 sm:left-0">
-              <h2 className="text-xl sm:text-2xl font-black text-blue-400">No</h2>
-              <p className="text-xs text-gray-400 mt-1">Monthly Fees</p>
+            <div className="text-center mt-10 sm:mt-8">
+              <div className="text-6xl sm:text-7xl lg:text-8xl font-black text-white">{finalScore}</div>
+              <div className="text-2xl sm:text-3xl font-bold text-blue-300">/ 100</div>
+              <p className="text-blue-200 text-lg sm:text-xl font-medium mt-3 sm:mt-4">
+                {finalScore >= 90 ? "Excellent" : finalScore >= 75 ? "Strong" : finalScore >= 60 ? "Good" : "Needs Work"}
+              </p>
             </div>
-            <div className="text-center p-3 sm:p-4 bg-black/40 rounded-xl shadow-lg border border-blue-500/20 w-2/3 sm:w-full relative left-1/6 sm:left-0">
-              <h2 className="text-xl sm:text-2xl font-black text-blue-400">$500-$150K</h2>
-              <p className="text-xs text-gray-400 mt-1">Per Placement</p>
-            </div>
-            <div className="text-center p-3 sm:p-4 bg-black/40 rounded-xl shadow-lg border border-blue-500/20 w-2/3 sm:w-full relative left-1/6 sm:left-0">
-              <h2 className="text-xl sm:text-2xl font-black text-blue-400">0%</h2>
-              <p className="text-xs text-gray-400 mt-1">Commission Taken</p>
-            </div>
-          </div>
-
-
-          <div className="text-center mb-3 sm:mb-4">
-            {/* <p className="text-gray-200 text-base sm:text-lg leading-relaxed text-center mb-4">
-              Indie artists are getting their music placed every day.
-            </p> */}
-
-          {/* CTA Button */}
-            <a
-              href="https://musicatlas.ai/syncrep/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block bg-blue-600 hover:bg-blue-500 hover:scale-105 text-white font-bold py-3 px-6 sm:py-4 sm:px-10 rounded-full text-sm sm:text-base lg:text-lg shadow-2xl transition-all duration-300"
-            >
-              Get in Front of Music Supervisors → Join SyncRep
-            </a>
-          </div>
-
-          <div className="text-center mb-4 sm:mb-5">
-            <p className="text-sm sm:text-base text-gray-400">
-              Use code <span className="font-mono font-bold text-blue-400 bg-blue-950/50 px-2 py-1 rounded">SYNCCHECK</span> for $5 off
-            </p>
-          </div>
-
-          <div className="text-center">
-            <button
-              onClick={onBack}
-              className="text-blue-300 hover:text-blue-200 text-base sm:text-lg font-medium transition"
-            >
-              ← Analyze Another Track
-            </button>
           </div>
         </div>
-      </div>
-    </section>
-  </main>
-);
+      </section>
+
+      {/* Breakdown Cards Section */}
+      <section className="relative z-10 px-4 sm:px-6 py-8 sm:py-12">
+        <div className="max-w-5xl mx-auto">
+          
+          {/* Mobile: Stacked */}
+          <div className="md:hidden grid grid-cols-1 gap-4">
+            {breakdowns.map((item, index) => {
+              const feedback = aiFeedback?.[item.aiFeedbackKey];
+              const isExpanded = expandedCard === index;
+
+              return (
+                <div 
+                  key={index}
+                  className="backdrop-blur-xl rounded-2xl shadow-xl border-2 hover:translate-x-0.5 hover:shadow-2xl transition"
+                  style={{ 
+                    borderColor: `${item.color}50`,
+                    boxShadow: `0 0 30px ${item.color}20`
+                  }}
+                >
+                  <div className="p-5 sm:p-6">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h3 className="text-lg sm:text-xl font-bold text-white">{item.category}</h3>
+                        <p className="text-sm font-medium" style={{ color: item.color }}>{item.value}</p>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-3xl font-black text-white">{item.displayScore}</div>
+                        <div className="text-sm text-gray-400">/100</div>
+                      </div>
+                    </div>
+
+                    <div className="w-full h-2.5 bg-gray-700/50 rounded-full overflow-hidden mb-4">
+                      <div
+                        className="h-full transition-all duration-500"
+                        style={{ 
+                          width: `${item.displayScore}%`,
+                          backgroundColor: item.color
+                        }}
+                      />
+                    </div>
+
+                    {feedback ? (
+                      <div>
+                        <p className="text-gray-300 text-sm font-medium mb-3">{feedback.short}</p>
+                        {isExpanded && (
+                          <div className="mt-4 space-y-3 animate-fadeIn">
+                            <div className="bg-blue-900/30 rounded-xl p-4 border border-blue-500/20">
+                              <p className="text-xs font-semibold text-blue-400 mb-1">Scene Perspective:</p>
+                              <p className="text-sm text-gray-300">{feedback.why}</p>
+                            </div>
+                            <div className="bg-green-900/30 rounded-xl p-4 border border-green-500/20">
+                              <p className="text-xs font-semibold text-green-400 mb-1">Production Notes:</p>
+                              <p className="text-sm text-gray-300">{feedback.improve}</p>
+                            </div>
+                          </div>
+                        )}
+                        <button
+                          onClick={() => setExpandedCard(isExpanded ? null : index)}
+                          className="mt-3 font-medium text-sm flex items-center gap-1 transition-colors"
+                          style={{ color: item.color }}
+                        >
+                          {isExpanded ? (
+                            <>Show less <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg></>
+                          ) : (
+                            <>Learn more <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></>
+                          )}
+                        </button>
+                      </div>
+                    ) : (
+                      <div>
+                        <p className="text-gray-400 text-sm">{item.explanation}</p>
+                        {!aiFeedback && <p className="text-gray-500 text-xs mt-2 italic">Loading AI insights...</p>}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Desktop: 2x2 Grid */}
+          <div className="hidden md:grid md:grid-cols-2 gap-5">
+            {breakdowns.map((item, index) => {
+              const feedback = aiFeedback?.[item.aiFeedbackKey];
+              const isExpanded = expandedCard === index;
+
+              return (
+                <div 
+                  key={index}
+                  className="backdrop-blur-xl rounded-2xl shadow-xl border-2 hover:translate-x-0.5 hover:shadow-2xl transition"
+                  style={{ 
+                    borderColor: `${item.color}50`,
+                    boxShadow: `0 0 30px ${item.color}20`
+                  }}
+                >
+                  <div className="p-6">
+                    <div className="flex justify-between items-start mb-4">
+                      <div>
+                        <h3 className="text-2xl font-bold text-white">{item.category}</h3>
+                        <p className="text-base font-medium mt-1" style={{ color: item.color }}>{item.value}</p>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-4xl font-black text-white">{item.displayScore}</div>
+                        <div className="text-sm text-gray-400">/100</div>
+                      </div>
+                    </div>
+
+                    <div className="w-full h-2.5 bg-gray-700/50 rounded-full overflow-hidden mb-4">
+                      <div
+                        className="h-full transition-all duration-500"
+                        style={{ 
+                          width: `${item.displayScore}%`,
+                          backgroundColor: item.color
+                        }}
+                      />
+                    </div>
+
+                    {feedback ? (
+                      <div>
+                        <p className="text-gray-300 text-sm font-medium mb-3">{feedback.short}</p>
+                        {isExpanded && (
+                          <div className="mt-4 space-y-3 animate-fadeIn">
+                            <div className="bg-blue-900/30 rounded-xl p-4 border border-blue-500/20">
+                              <p className="text-xs font-semibold text-blue-400 mb-1">Scene Perspective:</p>
+                              <p className="text-sm text-gray-300">{feedback.why}</p>
+                            </div>
+                            <div className="bg-green-900/30 rounded-xl p-4 border border-green-500/20">
+                              <p className="text-xs font-semibold text-green-400 mb-1">Production Notes:</p>
+                              <p className="text-sm text-gray-300">{feedback.improve}</p>
+                            </div>
+                          </div>
+                        )}
+                        <button
+                          onClick={() => setExpandedCard(isExpanded ? null : index)}
+                          className="mt-3 font-medium text-sm flex items-center gap-1 transition-colors"
+                          style={{ color: item.color }}
+                        >
+                          {isExpanded ? (
+                            <>Show less <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg></>
+                          ) : (
+                            <>Learn more <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg></>
+                          )}
+                        </button>
+                      </div>
+                    ) : (
+                      <div>
+                        <p className="text-gray-400 text-sm">{item.explanation}</p>
+                        {!aiFeedback && <p className="text-gray-500 text-xs mt-2 italic">Loading AI insights...</p>}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="relative z-10 px-4 sm:px-6 py-8 sm:py-12">
+        <div className="max-w-5xl mx-auto">
+          <div className="bg-gray-950 backdrop-blur-xl rounded-3xl shadow-2xl p-8 sm:p-10 border border-gray-800">
+            <h3 className="text-2xl sm:text-3xl font-bold text-white mb-4 sm:mb-6">
+              How to Generate More Revenue from Your Songs?
+            </h3>
+
+            <div className="prose prose-blue max-w-none mb-6 sm:mb-8">
+              {shouldShowGenrePopularity && (
+                <p className="text-blue-200 text-base leading-relaxed mb-4 pb-4 border-b border-blue-500/20">
+                  {primaryGenre && popularity !== null ? (
+                    <>Your track is a <strong className="text-white">{primaryGenre}</strong> song with a Spotify popularity score of <strong className="text-blue-300">{popularity}/100</strong> — a <strong className="text-white">{popularityLabel}</strong> track in a genre that supervisors are actively searching for.</>
+                  ) : primaryGenre ? (
+                    <>Your track sits in the <strong className="text-white">{primaryGenre}</strong> space — a genre that sync supervisors are actively searching for.</>
+                  ) : (
+                    <>Your track has a Spotify popularity score of <strong className="text-blue-300">{popularity}/100</strong>, marking it as a <strong className="text-white">{popularityLabel}</strong> track with real sync potential.</>
+                  )}
+                </p>
+              )}
+
+              <p className="text-gray-200 text-base sm:text-lg leading-relaxed">
+                <strong className="text-white">Sync licensing</strong> is how your music gets placed in TV shows, films, commercials, trailers, and video games—earning you upfront fees ranging from <strong className="text-blue-300">$500 for indie productions to $150,000+ for major campaigns</strong>. Unlike streaming pennies, a single sync placement can generate serious income while exposing your music to millions of viewers. <strong className="text-white">SyncRep</strong> puts your tracks directly in front of music supervisors through a searchable platform built specifically for sync discovery, positioning you where the money is: in the catalogs supervisors browse every day.
+              </p>
+            </div>
+
+            <div className="my-6 sm:my-8 flex items-center">
+              <div className="grow border-t border-blue-400/30"></div>
+              <span className="px-4 text-blue-300 font-semibold text-sm whitespace-nowrap">READY TO GET DISCOVERED?</span>
+              <div className="grow border-t border-blue-400/30"></div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-1 md:gap-4 mb-8">
+              <div className="text-center p-4 sm:p-5 bg-black/40 rounded-xl shadow-lg border border-blue-500/20">
+                <h2 className="text-2xl md:text-2xl font-extrabold text-blue-400">No</h2>
+                <p className="text-xs text-gray-400 mt-1">Monthly Fees</p>
+              </div>
+              <div className="text-center p-4 sm:p-5 bg-black/40 rounded-xl shadow-lg border border-blue-500/20">
+                <h2 className="text-2xl md:text-3xl font-extrabold text-blue-400">$500-$150K</h2>
+                <p className="text-xs text-gray-400 mt-1">Per Placement</p>
+              </div>
+              <div className="text-center p-4 sm:p-5 bg-black/40 rounded-xl shadow-lg border border-blue-500/20">
+                <h2 className="text-2xl md:text-3xl font-extrabold text-blue-400">0%</h2>
+                <p className="text-xs text-gray-400 mt-1">Commission Taken</p>
+              </div>
+            </div>
+
+            <div className="text-center my-4">
+              <p className="text-gray-200 text-base sm:text-lg leading-relaxed mb-4">
+                Indie artists are getting their music placed every day
+              </p>
+              
+              <a
+                href="https://musicatlas.ai/syncrep/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block bg-blue-600 hover:bg-blue-500 hover:scale-105 text-white font-bold py-4 px-10 rounded-full text-base sm:text-lg shadow-2xl transition-all duration-300"
+              >
+                Get in Front of Music Supervisors → Join SyncRep
+              </a>
+            </div>
+
+            <div className="text-center mb-6">
+              <p className="text-sm sm:text-base text-gray-400">
+                Use code <span className="font-mono font-bold text-blue-400 bg-blue-950/50 px-2 py-1 rounded">SYNCCHECK</span> for $5 off
+              </p>
+            </div>
+
+            <div className="text-center">
+              <button
+                onClick={onBack}
+                className="text-blue-300 hover:text-blue-200 text-base sm:text-lg font-medium transition-colors"
+              >
+                ← Analyze Another Track
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
 };
 
 export default ScoreBreakdown;

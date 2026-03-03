@@ -125,9 +125,24 @@ const SearchInput = ({ onTrackSelected }) => {
 
       <div className="w-full max-w-4xl relative z-10">
         <div className="bg-gray-950 rounded-3xl shadow-2xl p-8 border-gray-900 border">
-          <h1 className="text-6xl lg:text-7xl text-white text-center font-bold mb-2 leading-tight">
-            Sync<span className="bg-clip-text text-transparent bg-linear-to-r from-blue-300 to-violet-500">Check</span>
-          </h1>
+          <div className="relative top-5 mb-1">
+
+            {/* logo and title */}
+            <svg width="450" height="120" viewBox="0 0 300 80" className="mx-auto" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="f2" x1="0%" x2="100%">
+                  <stop offset="0%" stop-color="#93C5FD"/>
+                  <stop offset="100%" stop-color="#8B5CF6"/>
+                </linearGradient>
+              </defs>
+              
+              <circle cx="30" cy="40" r="24" fill="none" stroke="url(#f2)" stroke-width="2.5" opacity="0.2"/>
+              <path d="M 12 40 L 18 40 L 21 30 L 24 50 L 27 33 L 30 47 L 33 37 L 38 43 L 40 40 L 48 30 L 56 20" stroke="url(#f2)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+              <text x="65" y="52" font-family="Arial" font-size="42" font-weight="700" letterSpacing={-1} fill="#FFFFFF">Sync</text>
+              <text x="162" y="52" font-family="Arial" font-size="42" font-weight="700" letterSpacing={-1} fill="url(#f2)">Check</text>
+            </svg>
+          </div>
           <p className="text-blue-300 text-center text-xl md:text-2xl mb-3">
             Get Your Music into TV and Film
           </p>
