@@ -424,7 +424,7 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
                         )}
                         <button
                           onClick={() => setExpandedCard(isExpanded ? null : index)}
-                          className="mt-3 font-medium text-sm flex items-center gap-1 transition-colors"
+                          className="mt-3 font-medium text-sm flex items-center gap-1 transition-colors hover:cursor-pointer"
                           style={{ color: item.color }}
                         >
                           {isExpanded ? (
@@ -595,7 +595,7 @@ const ScoreBreakdown = ({ track, musicAtlasRaw, aiFeedback, onBack }) => {
             <div className="text-center">
               <button
                 onClick={onBack}
-                className="text-blue-300 hover:text-blue-200 text-base sm:text-lg font-medium transition-colors"
+                className="text-blue-300 hover:text-blue-200 text-base sm:text-lg font-medium transition-colors hover:cursor-pointer"
               >
                 ← Analyze Another Track
               </button>
