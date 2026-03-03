@@ -15,10 +15,10 @@ function App() {
   const [dataReady, setDataReady] = useState(false);
 
   const handleTrackSelected = async (track) => {
-    console.log("=== TRACK SELECTED ===");
-    console.log("Track:", track);
-    console.log("Duration from Spotify (ms):", track.duration_ms);
-    console.log("Duration in minutes:", track.duration_ms / 60000);
+    // console.log("=== TRACK SELECTED ===");
+    // console.log("Track:", track);
+    // console.log("Duration from Spotify (ms):", track.duration_ms);
+    // console.log("Duration in minutes:", track.duration_ms / 60000);
 
     setSelectedTrack(track);
 
