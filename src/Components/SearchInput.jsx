@@ -121,7 +121,7 @@ const SearchInput = ({ onTrackSelected }) => {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-tl from-gray-950 from-15% via-black via-50% to-gray-950 to-85%">
+    <div className="min-h-full bg-linear-to-tl from-gray-950 from-15% via-black via-50% to-gray-950 to-85%">
       <div className="min-h-screen flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-4xl relative z-10">
           <div className="bg-gray-950 rounded-3xl shadow-2xl p-8 border-gray-900 border">
